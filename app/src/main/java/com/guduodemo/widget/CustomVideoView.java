@@ -1,4 +1,4 @@
-package com.guduodemo;
+package com.guduodemo.widget;
 
 import android.content.Context;
 import android.media.MediaPlayer;

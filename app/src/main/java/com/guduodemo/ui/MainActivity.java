@@ -1,4 +1,4 @@
-package com.guduodemo;
+package com.guduodemo.ui;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -15,6 +15,12 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
+
+import com.guduodemo.widget.MainRippleView;
+import com.guduodemo.R;
+import com.guduodemo.utils.RecordUtils;
+import com.guduodemo.receiver.HeadsetReceiver;
+import com.guduodemo.widget.CustomVideoView;
 
 public class MainActivity extends AppCompatActivity implements CustomVideoView.OnCorveHideListener, MediaPlayer.OnCompletionListener, HeadsetReceiver.HeadSetConnectListener, View.OnClickListener {
     private CustomVideoView mVideoView;

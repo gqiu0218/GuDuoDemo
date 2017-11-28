@@ -1,4 +1,4 @@
-package com.guduodemo;
+package com.guduodemo.utils;
 
 import android.content.Context;
 import android.content.DialogInterface;

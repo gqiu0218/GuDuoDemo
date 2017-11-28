@@ -1,4 +1,4 @@
-package com.guduodemo;
+package com.guduodemo.widget;
 
 import android.animation.Animator;
 import android.animation.AnimatorSet;
@@ -9,6 +9,8 @@ import android.graphics.Paint;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.View;
+
+import com.guduodemo.R;
 
 
 /**

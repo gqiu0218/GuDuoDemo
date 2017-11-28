@@ -4,7 +4,7 @@
     android:layout_height="match_parent">
 
 
-    <com.guduodemo.CustomVideoView
+    <com.guduodemo.widget.CustomVideoView
         android:id="@+id/videoView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
@@ -17,7 +17,7 @@
         android:visibility="gone"
         android:layout_gravity="center_horizontal|bottom">
 
-        <com.guduodemo.MainRippleView
+        <com.guduodemo.widget.MainRippleView
             android:id="@+id/rippleView"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
