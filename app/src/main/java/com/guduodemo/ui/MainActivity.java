@@ -11,16 +11,23 @@ import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
 
+import com.guduodemo.listener.DownLoadListener;
+import com.guduodemo.net.HttpEngine;
+import com.guduodemo.utils.FileUtils;
 import com.guduodemo.widget.MainRippleView;
 import com.guduodemo.R;
 import com.guduodemo.utils.RecordUtils;
 import com.guduodemo.receiver.HeadsetReceiver;
 import com.guduodemo.widget.CustomVideoView;
+
+import java.io.File;
+import java.text.DecimalFormat;
 
 public class MainActivity extends AppCompatActivity implements CustomVideoView.OnCorveHideListener, MediaPlayer.OnCompletionListener, HeadsetReceiver.HeadSetConnectListener, View.OnClickListener {
     private CustomVideoView mVideoView;
@@ -35,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
     private int mIndexTwoProgress;
     private boolean mStopProgress;
     private SecondVideoRunnable mRunnable;
+    private DecimalFormat mFormat = new DecimalFormat("0.00");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,6 +126,7 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
 
         switch (mIndex) {
             case 0: //播放第二段，监听耳机插入状态
+                downLoad();
                 mIndex++;
                 setPlaySource(R.raw.video2);
                 check();
@@ -177,7 +186,7 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.record_layout:  //录音
-                mRippleView.start();
+//                mRippleView.start();
                 break;
         }
     }
@@ -201,5 +210,33 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
             }
             mHandler.postDelayed(this, 1000);
         }
+    }
+
+
+    public void downLoad() {
+        new Thread(){
+            @Override
+            public void run() {
+                String url = "http://picturesever2.b0.upaiyun.com/test/Android/agame4.mp4";
+                String fileName = FileUtils.getFileName(url);
+                String downloadPath = FileUtils.getDownLoadPath(MainActivity.this) + File.separator + fileName;
+                HttpEngine.downFile(downloadPath, url, new DownLoadListener() {
+                    @Override
+                    public void onProgress(int progress, int total) {
+                        Log.e("gqiu", "进度：progress=" + mFormat.format(((float) progress / total)));
+                    }
+
+                    @Override
+                    public void onDownLoaded(String path) {
+                        Log.e("gqiu", "下载完成");
+                    }
+
+                    @Override
+                    public void onFailure() {
+
+                    }
+                });
+            }
+        }.start();
     }
 }

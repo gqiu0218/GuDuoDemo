@@ -26,6 +26,21 @@ public class HttpEngine {
             if (code >= 200 && code < 300) {
                 InputStream is = conn.getInputStream();
                 File file = new File(path);
+
+                if (file.exists()) {
+                    if (file.length() == total) {
+                        //已经下载成功，直接返回
+                        listener.onDownLoaded(path);
+                        return;
+                    } else {
+                        //存在，但文件长度不一致，可能是上次没有下载完，删除重新下载
+                        file.delete();
+                        file.createNewFile();
+                    }
+                } else {
+                    file.createNewFile();
+                }
+
                 FileOutputStream fos = new FileOutputStream(file);
 
                 byte[] buffer = new byte[1024];
