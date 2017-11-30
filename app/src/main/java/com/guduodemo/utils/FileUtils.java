@@ -28,7 +28,7 @@ public class FileUtils {
         String rootPath = getRootFilePath(context);
         String path = rootPath + File.separator + DOWNLOAD;
         File downloadFile = new File(path);
-        if (downloadFile.exists()) {
+        if (!downloadFile.exists()) {
             downloadFile.mkdirs();
         }
         return path;
