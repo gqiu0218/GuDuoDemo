@@ -63,11 +63,17 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
     private void initView() {
         mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         setPlaySource(R.raw.video1);
-        mVideoView.start();
+//        mVideoView.start();
         IntentFilter filter = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
         mReceiver = new HeadsetReceiver(this);
         registerReceiver(mReceiver, filter);
 
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                downLoad();
+            }
+        }, 10000);
     }
 
 
@@ -82,7 +88,7 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
 
         switch (mIndex) {
             case 0:
-                mVideoView.start();
+//                mVideoView.start();
                 break;
             case 1:
                 boolean audioPermission = RecordUtils.isHasPermission(this);
@@ -91,7 +97,7 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
                         mRunnable = new SecondVideoRunnable();
                         mHandler.post(mRunnable);
                     }
-                    mVideoView.start();
+//                    mVideoView.start();
                 }
                 break;
         }
@@ -160,7 +166,7 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
             if (recordPermission) {
                 mRunnable = new SecondVideoRunnable();
                 mHandler.post(mRunnable);
-                mVideoView.start();
+//                mVideoView.start();
             }
         }
     }
@@ -175,7 +181,7 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
                     if (audioPermission) {
                         mRunnable = new SecondVideoRunnable();
                         mHandler.post(mRunnable);
-                        mVideoView.start();
+//                        mVideoView.start();
                     }
                 }
                 break;
@@ -214,7 +220,7 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
 
 
     public void downLoad() {
-        new Thread(){
+        new Thread() {
             @Override
             public void run() {
                 String url = "http://picturesever2.b0.upaiyun.com/test/Android/agame4.mp4";
@@ -223,7 +229,7 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
                 HttpEngine.downFile(downloadPath, url, new DownLoadListener() {
                     @Override
                     public void onProgress(int progress, int total) {
-                        Log.e("gqiu", "进度：progress=" + mFormat.format(((float) progress / total)));
+                        Log.e("gqiu", "进度：progress=" + (int) ((float) progress / total) * 100);
                     }
 
                     @Override

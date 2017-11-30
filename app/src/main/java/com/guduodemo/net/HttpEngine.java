@@ -45,12 +45,12 @@ public class HttpEngine {
 
                 byte[] buffer = new byte[1024];
                 int len;
-                int currentTotal = 0;  //当前下载大小
+                int current = 0;  //当前下载大小
 
                 while ((len = is.read(buffer)) != -1) {
                     fos.write(buffer, 0, len);
-                    currentTotal += len;
-                    listener.onProgress(total, currentTotal);
+                    current += len;
+                    listener.onProgress(current, total);
                 }
                 fos.flush();
                 fos.close();
