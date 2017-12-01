@@ -29,6 +29,7 @@ import com.guduodemo.receiver.HeadsetReceiver;
 import com.guduodemo.widget.CustomVideoView;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements CustomVideoView.OnCorveHideListener, MediaPlayer.OnCompletionListener, HeadsetReceiver.HeadSetConnectListener, View.OnClickListener {
@@ -43,6 +44,7 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
     private boolean mStopProgress;
     private SecondVideoRunnable mRunnable;
 
+    private List<String> mVideoPaths = new ArrayList<>();
 
     //step one
     private TextView mDownloadProgressTv;
@@ -65,24 +67,21 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
 
     private void initView() {
         mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        setPlaySource(R.raw.video1);
-        mVideoView.start();
         IntentFilter filter = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
         mReceiver = new HeadsetReceiver(this);
         registerReceiver(mReceiver, filter);
-        stepOneView();
+        stepZeroView();
     }
 
 
-    private void setPlaySource(int id) {
+    private void setPlaySource(String path) {
         //设置播放加载路径
-        mVideoView.setVideoURI(Uri.parse("android.resource://" + getPackageName() + "/" + id));
+        mVideoView.setVideoURI(Uri.parse(path));
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
         switch (mIndex) {
             case 0:
                 mVideoView.start();
@@ -120,23 +119,32 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
     @Override
     public void requestHide() {
         //隐藏第一帧图片(需要切图)
-
     }
 
     @Override
     public void onCompletion(MediaPlayer mp) {
         //播放完成,判断当前进度
-
+        mIndex++;
+        setPlaySource(mVideoPaths.get(mIndex));
         switch (mIndex) {
             case 0: //播放第二段，监听耳机插入状态
-                mIndex++;
-                setPlaySource(R.raw.video2);
                 check();
                 break;
             case 1: //播放第三段
-                mIndex++;
+                mVideoView.start();
 //                mRippleView.stop();
-//                mRecordLayout.setVisibility(View.GONE);
+                break;
+            case 2: //播放第四段
+                mVideoView.start();
+                break;
+            case 3: //播放第五段
+                mVideoView.start();
+                break;
+            case 4: //播放第六段
+                mVideoView.start();
+                break;
+            case 5: //播放第七段
+                mVideoView.start();
                 break;
         }
     }
@@ -145,6 +153,7 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
     //检查耳机
     private void check() {
         mConnectedHeadset = mAudioManager.isWiredHeadsetOn();
+        mConnectedHeadset = true;
         if (!mConnectedHeadset) {
             //不存在耳机
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -225,13 +234,14 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
                 HttpEngine.downFile(downloadPath, url, new DownLoadListener() {
                     @Override
                     public void onProgress(int progress, int total) {
-                        Log.e("gqiu", "进度：progress=" + (float) (progress / total) * 100);
-
-                      final  int percent = (int) ((float) progress / total * 100);
+                        final float currentFilePercent = (float) progress / total;
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                mDownloadProgressTv.setText(percent + "%正在下载...");
+                                float addPerCent = (float) 100 / mDownLoadUrls.size();
+                                int realPercent = (int) (addPerCent * mDownloadIndex + addPerCent * currentFilePercent);
+                                Log.e("gqiu", "percent=" + realPercent);
+                                mDownloadProgressTv.setText(realPercent + "%正在下载...");
                             }
                         });
 
@@ -239,14 +249,21 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
 
                     @Override
                     public void onDownLoaded(String path) {
+                        mVideoPaths.add(path);
                         if (mDownloadIndex < mDownLoadUrls.size() - 1) {
                             mDownloadIndex++;
                             downLoad();
                         } else {
                             //下载完成
-
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    removeCurrentStep();
+                                    setPlaySource(mVideoPaths.get(0));
+                                    mVideoView.start();
+                                }
+                            });
                         }
-                        Log.e("gqiu", "下载完成");
                     }
 
                     @Override
@@ -259,12 +276,21 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
     }
 
 
-    //步骤1-view
-    private void stepOneView() {
+    //步骤0-view
+    private void stepZeroView() {
         View stepView = LayoutInflater.from(this).inflate(R.layout.item_guide_step_one, mControlView, false);
         mDownloadProgressTv = (TextView) stepView.findViewById(R.id.download_progress_tv);
         mDownLoadUrls = DownLoadFileUtils.getDownLoadUrlList();
         mControlView.addView(stepView);
         downLoad();
+    }
+
+
+    private void stepOneView() {
+
+    }
+
+    private void removeCurrentStep() {
+        mControlView.removeAllViews();
     }
 }
