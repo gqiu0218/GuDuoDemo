@@ -4,6 +4,7 @@ import android.content.Context;
 import android.text.TextUtils;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * 文件工具类
@@ -12,6 +13,7 @@ import java.io.File;
 
 public class FileUtils {
     private static final String DOWNLOAD = "download";
+    private static final String VOICE = "voice";
 
 
     private static String getRootFilePath(Context context) {
@@ -32,6 +34,36 @@ public class FileUtils {
             downloadFile.mkdirs();
         }
         return path;
+    }
+
+
+    private static String getVoicePath(Context context) {
+        String rootPath = getRootFilePath(context);
+        String path = rootPath + File.separator + VOICE;
+        File downloadFile = new File(path);
+        if (!downloadFile.exists()) {
+            downloadFile.mkdirs();
+        }
+        return path;
+    }
+
+
+    public static String getVoicePath(Context context, int screen, int index) {
+        String rootPath = getVoicePath(context);
+        String filePath = rootPath + File.separator + "voice" + screen + "_" + index + ".amr";
+
+        File file = new File(filePath);
+        if (file.exists()) {
+            file.delete();
+        }
+
+        try {
+            file.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return filePath;
     }
 
 

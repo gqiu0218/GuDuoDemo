@@ -42,7 +42,7 @@ public class MainRippleView extends View implements Animator.AnimatorListener {
 
     private void init() {
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mPaint.setColor(ContextCompat.getColor(getContext(), R.color.color_3f51b5));
+        mPaint.setColor(ContextCompat.getColor(getContext(), R.color.white));
         mPaint.setStrokeWidth(dp2px(2));
         mPaint.setStyle(Paint.Style.FILL);
         mStopDraw1 = true;
@@ -100,7 +100,7 @@ public class MainRippleView extends View implements Animator.AnimatorListener {
         mStopDraw2 = false;
         mStopDraw3 = false;
 
-        int start =  dp2px(30);
+        int start = dp2px(30);
 
 
         animatorSet = new AnimatorSet();
