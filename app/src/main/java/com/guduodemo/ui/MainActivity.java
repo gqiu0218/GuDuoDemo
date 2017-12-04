@@ -9,6 +9,7 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
@@ -17,6 +18,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -34,13 +36,13 @@ import com.guduodemo.task.ScreenSixTask;
 import com.guduodemo.task.ScreenThreeTask;
 import com.guduodemo.task.ScreenTwoTask;
 import com.guduodemo.widget.CustomVideoView;
-import com.guduodemo.widget.MainRippleView;
 
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements CustomVideoView.OnCorveHideListener, MediaPlayer.OnCompletionListener, HeadsetReceiver.HeadSetConnectListener, View.OnClickListener, DownLoadFileUtils.DownLoadedListener {
     private CustomVideoView mVideoView;
     private RelativeLayout mControlView;
+    private ImageView backIv;
     private int mIndex = -1;
     private HeadsetReceiver mReceiver;
     private boolean mConnectedHeadset;
@@ -57,9 +59,9 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
     private TextView mDownloadProgressTv;
     private List<String> mCaches;
 
-    //录音
-    private MainRippleView mRippleView;
-    private ImageView mRecordView;
+    //step screen
+    private LinearLayout actionLayout;
+
 
     //step six
     private TextView analyzeVoiceTv;
@@ -80,6 +82,8 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
         setContentView(R.layout.activity_main);
         mVideoView = (CustomVideoView) findViewById(R.id.videoView);
         mControlView = (RelativeLayout) findViewById(R.id.control);
+        backIv = (ImageView) findViewById(R.id.back_iv);
+        backIv.setOnClickListener(this);
         mVideoView.setOnCorveHideListener(this);
         mVideoView.setOnCompletionListener(this);
         initView();
@@ -110,6 +114,7 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
             mCaches = cacheFiles;
             playStepZeroView();
         }
+
     }
 
 
@@ -190,23 +195,23 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
         switch (mIndex) {
             case 1: //播放第1段，监听耳机插入状态
                 mHandler.removeCallbacks(mScreenOneTask);
-                addEndView();
+                mIndex = playStepTwoView();
                 break;
             case 2: //播放第2段
                 mHandler.removeCallbacks(mScreenTwoTask);
-                addEndView();
+                mIndex = playStepThreeView();
                 break;
             case 3: //播放第3段
                 mHandler.removeCallbacks(mScreenThreeTask);
-                addEndView();
+                mIndex = playStepFourView();
                 break;
             case 4: //播放第4段
                 mHandler.removeCallbacks(mScreenFourTask);
-                addEndView();
+                mIndex = playStepFiveView();
                 break;
             case 5: //播放第5段
                 mHandler.removeCallbacks(mScreenFiveTask);
-                addEndView();
+                mIndex = playStepSixView();
                 break;
             case 6: //播放第6段
                 mHandler.removeCallbacks(mScreenSixTask);
@@ -219,6 +224,7 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
     //检查耳机,录音权限
     private boolean check() {
         mConnectedHeadset = mAudioManager.isWiredHeadsetOn();
+        mConnectedHeadset = true;
         if (!mConnectedHeadset) {
             //不存在耳机
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -245,6 +251,9 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.back_iv:
+                exit();
+                break;
             case R.id.start_test_btn: //开始测试
                 if (!check()) {
                     return;
@@ -259,7 +268,7 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
 
                 break;
             case R.id.finish_btn:      //完成测试
-
+                Toast.makeText(this, "功能待加入", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.reset_btn:       //重新开始
                 switch (mIndex) {
@@ -302,6 +311,26 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
         }
     }
 
+    private void exit() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("提示");
+        builder.setMessage("确定要退出吗？");
+        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.setPositiveButton("退出", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                finish();
+            }
+        });
+        builder.show();
+    }
+
     @Override
     public void downLoaded(List<String> result) {
         mCaches = result;
@@ -332,22 +361,15 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
     }
 
 
-    private void stepRecordView() {
-        View stepView = LayoutInflater.from(this).inflate(R.layout.item_record, mControlView, false);
-        mRippleView = (MainRippleView) stepView.findViewById(R.id.rippleView);
-        mRecordView = (ImageView) stepView.findViewById(R.id.start_record_btn);
-        mRecordView.setOnClickListener(this);
-        mControlView.addView(stepView);
-    }
-
-
     private void addEndView() {
         removeCurrentStep();
         View stepView = LayoutInflater.from(this).inflate(R.layout.item_end_view, mControlView, false);
+        actionLayout = (LinearLayout) stepView.findViewById(R.id.action_layout);
         stepView.findViewById(R.id.reset_btn).setOnClickListener(this);
         stepView.findViewById(R.id.next_btn).setOnClickListener(this);
         if (mIndex == 5) {
-            ((Button) stepView.findViewById(R.id.next_btn)).setText(R.string.test_finsih);
+            ((Button) stepView.findViewById(R.id.next_btn)).setText(R.string.create_result);
+            ((Button) stepView.findViewById(R.id.next_btn)).setTextColor(ContextCompat.getColor(this, R.color.color_51d193));
         }
         mControlView.addView(stepView);
     }
@@ -366,6 +388,7 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
 
     //播放片段0
     private void playStepZeroView() {
+        backIv.setVisibility(View.VISIBLE);
         mIndex = 0;
         setPlaySource(mCaches.get(0));
         mVideoView.start();
@@ -384,9 +407,9 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
         setPlaySource(mCaches.get(1));
         mVideoView.start();
         removeCurrentStep();
-        stepRecordView();
+        addEndView();
 
-        mScreenOneTask = new ScreenOneTask(this, mRippleView, mRecordView, mHandler);
+        mScreenOneTask = new ScreenOneTask(this, actionLayout, mHandler);
         mHandler.post(mScreenOneTask);
         mVideoView.start();
         return 1;
@@ -402,9 +425,9 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
         setPlaySource(mCaches.get(2));
         mVideoView.start();
         removeCurrentStep();
-        stepRecordView();
+        addEndView();
 
-        mScreenTwoTask = new ScreenTwoTask(this, mRippleView, mRecordView, mHandler);
+        mScreenTwoTask = new ScreenTwoTask(this, actionLayout, mHandler);
         mHandler.post(mScreenTwoTask);
         mVideoView.start();
         return 2;
@@ -420,9 +443,9 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
         setPlaySource(mCaches.get(3));
         mVideoView.start();
         removeCurrentStep();
-        stepRecordView();
+        addEndView();
 
-        mScreenThreeTask = new ScreenThreeTask(this, mRippleView, mRecordView, mHandler);
+        mScreenThreeTask = new ScreenThreeTask(this, actionLayout, mHandler);
         mHandler.post(mScreenThreeTask);
         mVideoView.start();
 
@@ -439,9 +462,9 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
         setPlaySource(mCaches.get(4));
         mVideoView.start();
         removeCurrentStep();
-        stepRecordView();
+        addEndView();
 
-        mScreenFourTask = new ScreenFourTask(this, mRippleView, mRecordView, mHandler);
+        mScreenFourTask = new ScreenFourTask(this, actionLayout, mHandler);
         mHandler.post(mScreenFourTask);
         mVideoView.start();
 
@@ -458,9 +481,9 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
         setPlaySource(mCaches.get(5));
         mVideoView.start();
         removeCurrentStep();
-        stepRecordView();
+        addEndView();
 
-        mScreenFiveTask = new ScreenFiveTask(this, mRippleView, mRecordView, mHandler);
+        mScreenFiveTask = new ScreenFiveTask(this, actionLayout, mHandler);
         mHandler.post(mScreenFiveTask);
         mVideoView.start();
         return 5;

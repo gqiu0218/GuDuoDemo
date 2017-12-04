@@ -8,6 +8,10 @@
     <color name="white">#ffffff</color>
     <color name="color_333333">#333333</color>
     <color name="white50">#7fffffff</color>
+    <color name="black50">#7f000000</color>
     <color name="trans">#00000000</color>
     <color name="color_ff9437">#ff9437</color>
+    <color name="color_8667c3">#8667c3</color>
+    <color name="color_51d193">#51d193</color>
+    <color name="color_8cdf85">#8cdf85</color>
 </resources>

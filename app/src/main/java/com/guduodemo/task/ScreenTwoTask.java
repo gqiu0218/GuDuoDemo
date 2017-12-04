@@ -3,27 +3,24 @@ package com.guduodemo.task;
 import android.content.Context;
 import android.os.Handler;
 import android.view.View;
-import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.guduodemo.utils.FileUtils;
 import com.guduodemo.utils.RecordUtils;
-import com.guduodemo.widget.MainRippleView;
 
 public class ScreenTwoTask implements Runnable {
     private Context mContext;
-    private MainRippleView mRippleView;
-    private ImageView mRecordView;
     private int progress;
     private boolean mStopProgress;
     private Handler mHandler;
     private RecordUtils mRecordUtils;
+    private LinearLayout mActionLayout;
 
 
-    public ScreenTwoTask(Context context, MainRippleView mRippleView, ImageView mRecordView, Handler handler) {
+    public ScreenTwoTask(Context context, LinearLayout actionLayout, Handler handler) {
         mContext = context;
-        this.mRippleView = mRippleView;
-        this.mRecordView = mRecordView;
         mHandler = handler;
+        mActionLayout = actionLayout;
         mRecordUtils = new RecordUtils();
     }
 
@@ -33,56 +30,39 @@ public class ScreenTwoTask implements Runnable {
         }
         mRecordUtils.stopRecord();
         mStopProgress = stop;
-        mRippleView.setVisibility(View.GONE);
-        mRecordView.setVisibility(View.GONE);
-        mRippleView.stop();
     }
 
     @Override
     public void run() {
         if (progress == 21) {
-            mRippleView.setVisibility(View.VISIBLE);
-            mRecordView.setVisibility(View.VISIBLE);
-            mRippleView.start();
             mRecordUtils.initRecord(FileUtils.getVoicePath(mContext, 2, 1));
         }
 
         if (progress == 24) {
-            mRippleView.setVisibility(View.GONE);
-            mRecordView.setVisibility(View.GONE);
-            mRippleView.stop();
             mRecordUtils.stopRecord();
         }
 
         if (progress == 28) {
-            mRippleView.setVisibility(View.VISIBLE);
-            mRecordView.setVisibility(View.VISIBLE);
-            mRippleView.start();
             mRecordUtils.initRecord(FileUtils.getVoicePath(mContext, 2, 2));
         }
 
 
         if (progress == 31) {
-            mRippleView.setVisibility(View.GONE);
-            mRecordView.setVisibility(View.GONE);
-            mRippleView.stop();
             mRecordUtils.stopRecord();
         }
 
 
         if (progress == 36) {
-            mRippleView.setVisibility(View.VISIBLE);
-            mRecordView.setVisibility(View.VISIBLE);
-            mRippleView.start();
             mRecordUtils.initRecord(FileUtils.getVoicePath(mContext, 2, 3));
         }
 
 
         if (progress == 40) {
-            mRippleView.setVisibility(View.GONE);
-            mRecordView.setVisibility(View.GONE);
-            mRippleView.stop();
             mRecordUtils.stopRecord();
+        }
+
+        if (progress == 42) {
+            mActionLayout.setVisibility(View.VISIBLE);
         }
 
         if (!mStopProgress) {
