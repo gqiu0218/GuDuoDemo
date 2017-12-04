@@ -1,12 +1,18 @@
 package com.guduodemo.utils;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.net.Uri;
+import android.os.Build;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 
 /**
@@ -26,7 +32,18 @@ public class RecordUtils {
     // 缓冲区字节大小
     private static int bufferSizeInBytes;
 
+    private MediaRecorder mRecorder;
+    private boolean mRecording;
+
     public static boolean isHasPermission(final Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.RECORD_AUDIO}, 1);
+                return false;
+            }
+        }
+
+
         bufferSizeInBytes = 0;
         bufferSizeInBytes = AudioRecord.getMinBufferSize(sampleRateInHz, channelConfig, audioFormat);
         AudioRecord audioRecord = new AudioRecord(audioSource, sampleRateInHz,
@@ -67,5 +84,34 @@ public class RecordUtils {
         intent.setAction("android.settings.APPLICATION_DETAILS_SETTINGS");
         intent.setData(Uri.fromParts("package", context.getPackageName(), null));
         context.startActivity(intent);
+    }
+
+
+    public void initRecord(String filePath) {
+        mRecorder = new MediaRecorder();// new出MediaRecorder对象
+        mRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
+        // 设置MediaRecorder的音频源为麦克风
+        mRecorder.setOutputFormat(MediaRecorder.OutputFormat.RAW_AMR);
+        // 设置MediaRecorder录制的音频格式
+        mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+        // 设置MediaRecorder录制音频的编码为amr.
+        mRecorder.setOutputFile(filePath);
+        // 设置录制好的音频文件保存路径
+        try {
+            mRecorder.prepare();// 准备录制
+            mRecorder.start();// 开始录制
+            mRecording = true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public void stopRecord() {
+        if (mRecording) {
+            mRecorder.stop();// 停止刻录
+            mRecorder.release(); // 刻录完成一定要释放资源
+            mRecording = false;
+        }
     }
 }

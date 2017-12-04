@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">唱功</string>
+    <string name="start_test">开始测试</string>
+    <string name="reset_test">重新测试</string>
+    <string name="next">下一关</string>
+    <string name="test_finsih">完成测试</string>
+    <string name="score">分</string>
+    <string name="high_pitch">高音测试</string>
+    <string name="low_pitch">低音测试</string>
+    <string name="intonation_pitch">音准测试</string>
+    <string name="breath_pitch">气息测试</string>
+    <string name="rhythm_pitch">节奏测试</string>
+    <string name="voice_test_result">声音测试结果</string>
+    <string name="network_error">网络错误,请检测网络</string>
 </resources>
