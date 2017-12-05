@@ -1,0 +1,9 @@
+<resources>
+    <string name="share_to">分享至</string>
+    <string name="wechat">微信</string>
+    <string name="wechat_circle">朋友圈</string>
+    <string name="qq">QQ</string>
+    <string name="qzone">QQ空间</string>
+    <string name="cancel">取消分享</string>
+    <string name="umeng_socialize_male">男</string>
+</resources>

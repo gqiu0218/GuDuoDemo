@@ -5,9 +5,22 @@
     android:gravity="center"
     android:orientation="vertical">
 
-    <com.guduodemo.widget.LongRecordView
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="30dp"
         android:layout_marginLeft="40dp"
-        android:layout_marginRight="40dp" />
+        android:layout_marginRight="40dp"
+        android:background="@drawable/shape_background"
+        android:padding="4dp">
+
+        <View
+            android:layout_width="200dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/shape_current_progress" />
+
+        <com.singingkungfu.sing.widget.UnitView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </RelativeLayout>
 </LinearLayout>

@@ -11,7 +11,7 @@
         android:layout_centerHorizontal="true">
 
 
-        <com.guduodemo.widget.MainRippleView
+        <com.singingkungfu.sing.widget.MainRippleView
             android:id="@+id/rippleView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
