@@ -31,13 +31,13 @@ import com.singingkungfu.sing.net.NetUtils;
 import com.singingkungfu.sing.receiver.HeadsetReceiver;
 import com.singingkungfu.sing.share.ShareDialog;
 import com.singingkungfu.sing.share.ShareListener;
-import com.singingkungfu.sing.task.ScreenSixTask;
-import com.singingkungfu.sing.utils.RecordUtils;
 import com.singingkungfu.sing.task.ScreenFiveTask;
 import com.singingkungfu.sing.task.ScreenFourTask;
 import com.singingkungfu.sing.task.ScreenOneTask;
+import com.singingkungfu.sing.task.ScreenSixTask;
 import com.singingkungfu.sing.task.ScreenThreeTask;
 import com.singingkungfu.sing.task.ScreenTwoTask;
+import com.singingkungfu.sing.utils.RecordUtils;
 import com.singingkungfu.sing.widget.CustomVideoView;
 import com.umeng.socialize.UMShareAPI;
 
@@ -232,7 +232,6 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
     //检查耳机,录音权限
     private boolean check() {
         mConnectedHeadset = mAudioManager.isWiredHeadsetOn();
-        mConnectedHeadset = true;
         if (!mConnectedHeadset) {
             //不存在耳机
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
