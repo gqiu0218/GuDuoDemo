@@ -17,7 +17,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".ui.MainActivity"
+            android:name=".ui.TestActivity"
             android:keepScreenOn="true"
             android:screenOrientation="portrait">
             <intent-filter>

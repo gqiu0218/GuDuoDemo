@@ -3,25 +3,22 @@ package com.guduodemo.task;
 import android.content.Context;
 import android.os.Handler;
 import android.view.View;
-import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.guduodemo.utils.FileUtils;
 import com.guduodemo.utils.RecordUtils;
-import com.guduodemo.widget.MainRippleView;
 
 public class ScreenFourTask implements Runnable {
     private Context mContext;
-    private MainRippleView mRippleView;
-    private ImageView mRecordView;
+    private LinearLayout mActionLayout;
     private int progress;
     private boolean mStopProgress;
     private Handler mHandler;
     private RecordUtils mRecordUtils;
 
-    public ScreenFourTask(Context context, MainRippleView mRippleView, ImageView mRecordView, Handler handler) {
+    public ScreenFourTask(Context context, LinearLayout actionLayout, Handler handler) {
         mContext = context;
-        this.mRippleView = mRippleView;
-        this.mRecordView = mRecordView;
+        mActionLayout = actionLayout;
         mHandler = handler;
         mRecordUtils = new RecordUtils();
     }
@@ -32,25 +29,21 @@ public class ScreenFourTask implements Runnable {
         }
         mRecordUtils.stopRecord();
         mStopProgress = stop;
-        mRippleView.setVisibility(View.GONE);
-        mRecordView.setVisibility(View.GONE);
-        mRippleView.stop();
     }
 
     @Override
     public void run() {
         if (progress == 18) {
-            mRippleView.setVisibility(View.VISIBLE);
-            mRecordView.setVisibility(View.VISIBLE);
-            mRippleView.start();
             mRecordUtils.initRecord(FileUtils.getVoicePath(mContext, 4, 1));
         }
 
         if (progress == 60) {
-            mRippleView.setVisibility(View.GONE);
-            mRecordView.setVisibility(View.GONE);
-            mRippleView.stop();
             mRecordUtils.stopRecord();
+        }
+
+
+        if (progress == 62) {
+            mActionLayout.setVisibility(View.VISIBLE);
         }
 
         if (!mStopProgress) {

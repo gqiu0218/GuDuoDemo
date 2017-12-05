@@ -3,24 +3,21 @@ package com.guduodemo.task;
 import android.content.Context;
 import android.os.Handler;
 import android.view.View;
-import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.guduodemo.utils.FileUtils;
 import com.guduodemo.utils.RecordUtils;
-import com.guduodemo.widget.MainRippleView;
 
 public class ScreenFiveTask implements Runnable {
     private Context mContext;
-    private MainRippleView mRippleView;
-    private ImageView mRecordView;
+    private LinearLayout mActionLayout;
     private int progress;
     private boolean mStopProgress;
     private Handler mHandler;
     private RecordUtils mRecordUtils;
 
-    public ScreenFiveTask(Context context, MainRippleView mRippleView, ImageView mRecordView, Handler handler) {
-        this.mRippleView = mRippleView;
-        this.mRecordView = mRecordView;
+    public ScreenFiveTask(Context context, LinearLayout actionLayout, Handler handler) {
+        mActionLayout = actionLayout;
         mHandler = handler;
         mContext = context;
         mRecordUtils = new RecordUtils();
@@ -32,38 +29,27 @@ public class ScreenFiveTask implements Runnable {
         }
         mRecordUtils.stopRecord();
         mStopProgress = stop;
-        mRippleView.setVisibility(View.GONE);
-        mRecordView.setVisibility(View.GONE);
-        mRippleView.stop();
     }
 
     @Override
     public void run() {
         if (progress == 29) {
-            mRippleView.setVisibility(View.VISIBLE);
-            mRecordView.setVisibility(View.VISIBLE);
-            mRippleView.start();
             mRecordUtils.initRecord(FileUtils.getVoicePath(mContext, 5, 1));
         }
 
         if (progress == 36) {
-            mRippleView.setVisibility(View.GONE);
-            mRecordView.setVisibility(View.GONE);
-            mRippleView.stop();
             mRecordUtils.stopRecord();
         }
         if (progress == 40) {
-            mRippleView.setVisibility(View.VISIBLE);
-            mRecordView.setVisibility(View.VISIBLE);
-            mRippleView.start();
             mRecordUtils.initRecord(FileUtils.getVoicePath(mContext, 5, 2));
         }
 
         if (progress == 47) {
-            mRippleView.setVisibility(View.GONE);
-            mRecordView.setVisibility(View.GONE);
-            mRippleView.stop();
             mRecordUtils.stopRecord();
+        }
+
+        if (progress == 49) {
+            mActionLayout.setVisibility(View.VISIBLE);
         }
 
         if (!mStopProgress) {
