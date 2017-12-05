@@ -13,6 +13,7 @@
     <string name="rhythm_pitch">节奏测试</string>
     <string name="voice_test_result">声音测试结果</string>
     <string name="network_error">网络错误,请检测网络</string>
+    <string name="analyze_voice">我们正在为您的声音做分析</string>
 
 
     <!--pickerview  start-->

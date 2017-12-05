@@ -25,14 +25,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.singingkungfu.sing.R;
+import com.singingkungfu.sing.listener.AnalyzeVoiceListener;
 import com.singingkungfu.sing.net.DownLoadFileUtils;
 import com.singingkungfu.sing.net.NetUtils;
 import com.singingkungfu.sing.receiver.HeadsetReceiver;
+import com.singingkungfu.sing.share.ShareDialog;
+import com.singingkungfu.sing.share.ShareListener;
+import com.singingkungfu.sing.task.ScreenSixTask;
 import com.singingkungfu.sing.utils.RecordUtils;
 import com.singingkungfu.sing.task.ScreenFiveTask;
 import com.singingkungfu.sing.task.ScreenFourTask;
 import com.singingkungfu.sing.task.ScreenOneTask;
-import com.singingkungfu.sing.task.ScreenSixTask;
 import com.singingkungfu.sing.task.ScreenThreeTask;
 import com.singingkungfu.sing.task.ScreenTwoTask;
 import com.singingkungfu.sing.widget.CustomVideoView;
@@ -40,7 +43,7 @@ import com.umeng.socialize.UMShareAPI;
 
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements CustomVideoView.OnCorveHideListener, MediaPlayer.OnCompletionListener, HeadsetReceiver.HeadSetConnectListener, View.OnClickListener, DownLoadFileUtils.DownLoadedListener {
+public class MainActivity extends AppCompatActivity implements CustomVideoView.OnCorveHideListener, MediaPlayer.OnCompletionListener, HeadsetReceiver.HeadSetConnectListener, View.OnClickListener, DownLoadFileUtils.DownLoadedListener, AnalyzeVoiceListener, ShareListener {
     private CustomVideoView mVideoView;
     private RelativeLayout mControlView;
     private ImageView backIv;
@@ -63,6 +66,9 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
     //step screen
     private LinearLayout actionLayout;
 
+    //step four
+    private RelativeLayout mProgressLayout;
+    private View mCurrentProgressLayout;
 
     //step six
     private TextView analyzeVoiceTv;
@@ -113,7 +119,8 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
         } else {
             //直接开始播放第0个片段
             mCaches = cacheFiles;
-            playStepZeroView();
+//            playStepZeroView();
+            playStepSixView();
         }
 
     }
@@ -266,7 +273,8 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
                 mIndex = playStepOneView();
                 break;
             case R.id.share_iv:         //分享
-
+                ShareDialog dialog = new ShareDialog(this, this);
+                dialog.show();
                 break;
             case R.id.finish_btn:      //完成测试
                 Toast.makeText(this, "功能待加入", Toast.LENGTH_SHORT).show();
@@ -375,6 +383,17 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
         mControlView.addView(stepView);
     }
 
+    private void addStepFourView() {
+        removeCurrentStep();
+        View stepView = LayoutInflater.from(this).inflate(R.layout.item_step_four, mControlView, false);
+        mProgressLayout = (RelativeLayout) stepView.findViewById(R.id.progress_layout);
+        mCurrentProgressLayout = stepView.findViewById(R.id.current_progress);
+        actionLayout = (LinearLayout) stepView.findViewById(R.id.action_layout);
+        stepView.findViewById(R.id.reset_btn).setOnClickListener(this);
+        stepView.findViewById(R.id.next_btn).setOnClickListener(this);
+        mControlView.addView(stepView);
+    }
+
     private void addAnalyzeVoiceView() {
         removeCurrentStep();
         View stepView = LayoutInflater.from(this).inflate(R.layout.item_analyze_voice, mControlView, false);
@@ -462,13 +481,11 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
 
         setPlaySource(mCaches.get(4));
         mVideoView.start();
-        removeCurrentStep();
-        addEndView();
+        addStepFourView();
 
-        mScreenFourTask = new ScreenFourTask(this, actionLayout, mHandler);
+        mScreenFourTask = new ScreenFourTask(this, actionLayout, mProgressLayout, mCurrentProgressLayout, mHandler);
         mHandler.post(mScreenFourTask);
         mVideoView.start();
-
         return 4;
     }
 
@@ -501,7 +518,7 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
         mVideoView.start();
         addAnalyzeVoiceView();
 
-        mScreenSixTask = new ScreenSixTask(this, analyzeVoiceTv, mHandler);
+        mScreenSixTask = new ScreenSixTask(mHandler, analyzeVoiceTv, this);
         mHandler.post(mScreenSixTask);
 
         return 6;
@@ -541,5 +558,22 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
     }
 
 
+    @Override
+    public void analyzeComplete() {
+        //分析完成
+        mHandler.removeCallbacks(mScreenSixTask);
+        playStepSevenView();
+    }
 
+    @Override
+    public void onStartShare() {
+    }
+
+    @Override
+    public void onCancelShare() {
+    }
+
+    @Override
+    public void onFinishShare() {
+    }
 }

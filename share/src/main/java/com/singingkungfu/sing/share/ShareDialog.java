@@ -49,6 +49,7 @@ public class ShareDialog implements View.OnClickListener {
         dialogView.findViewById(R.id.wechat_circle_layout).setOnClickListener(this);
         dialogView.findViewById(R.id.wechat_layout).setOnClickListener(this);
         dialogView.findViewById(R.id.qzone_layout).setOnClickListener(this);
+        dialogView.findViewById(R.id.weibo_layout).setOnClickListener(this);
         dialogView.findViewById(R.id.cancel_tv).setOnClickListener(this);
         dialog.setContentView(dialogView);
 
@@ -110,6 +111,9 @@ public class ShareDialog implements View.OnClickListener {
         } else if (view.getId() == R.id.wechat_layout) {
             //微信分享
             result = mShareUtils.shareH5(SHARE_MEDIA.WEIXIN, mContent, mPhotoUrl, mTitle, mShareUrl);
+        } else if (view.getId() == R.id.weibo_layout) {
+            //微博分享
+            result = mShareUtils.shareH5(SHARE_MEDIA.SINA, mContent, mPhotoUrl, mTitle, mShareUrl);
         } else if (view.getId() == R.id.cancel_tv) {
             //取消分享
             dismiss();
