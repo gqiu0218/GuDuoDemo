@@ -1,0 +1,9 @@
+<resources>
+    <!--pickerview  start-->
+    <dimen name="pickerview_topbar_height">44dp</dimen>
+    <dimen name="pickerview_topbar_padding">20dp</dimen>
+    <dimen name="pickerview_topbar_btn_textsize">17sp</dimen>
+    <dimen name="pickerview_topbar_title_textsize">18sp</dimen>
+    <dimen name="pickerview_textsize">20sp</dimen>
+    <!--pickerview  end-->
+</resources>
