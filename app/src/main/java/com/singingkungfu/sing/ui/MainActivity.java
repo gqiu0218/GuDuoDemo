@@ -200,7 +200,7 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
                 onBack();
                 break;
             case R.id.reset_test_btn:   //重新测试
-
+                playStepFiveView();
                 break;
             case R.id.share_iv:         //分享
                 ShareDialog dialog = new ShareDialog(this, this);
@@ -383,6 +383,7 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
         //分析完成
         mHandler.removeCallbacks(mScreenSixTask);
         playStepSevenView();
+        mVideoView.pause();
     }
 
 

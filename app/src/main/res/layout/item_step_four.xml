@@ -62,7 +62,7 @@
             android:background="@drawable/selector_white_btn"
             android:padding="0px"
             android:text="@string/next"
-            android:textColor="@color/color_8667c3"
+            android:textColor="@color/color_4fc8ec"
             android:textSize="14sp" />
     </LinearLayout>
 
