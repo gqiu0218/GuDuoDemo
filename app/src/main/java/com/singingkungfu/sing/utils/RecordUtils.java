@@ -14,6 +14,9 @@ import android.os.Build;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
+
+import java.io.File;
 
 /**
  * 录音权限检查
@@ -34,6 +37,8 @@ public class RecordUtils {
 
     private MediaRecorder mRecorder;
     private boolean mRecording;
+    private boolean mHasVoice;
+    private String mFilePath;
 
     public static boolean isHasPermission(final Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -88,6 +93,7 @@ public class RecordUtils {
 
 
     public void initRecord(String filePath) {
+        mHasVoice = false;
         mRecorder = new MediaRecorder();// new出MediaRecorder对象
         mRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
         // 设置MediaRecorder的音频源为麦克风
@@ -96,6 +102,7 @@ public class RecordUtils {
         mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
         // 设置MediaRecorder录制音频的编码为amr.
         mRecorder.setOutputFile(filePath);
+        mFilePath = filePath;
         // 设置录制好的音频文件保存路径
         try {
             mRecorder.prepare();// 准备录制
@@ -112,6 +119,31 @@ public class RecordUtils {
             mRecorder.stop();// 停止刻录
             mRecorder.release(); // 刻录完成一定要释放资源
             mRecording = false;
+
+            if (!mHasVoice) {
+                //删除静音文件
+                File file = new File(mFilePath);
+                if (file.exists()) {
+                    file.delete();
+                }
+            }
         }
+    }
+
+
+    public void updateMicStatus() {
+        if (!mRecording || mRecorder == null)
+            return;
+
+
+        double ratio = (double) mRecorder.getMaxAmplitude() / 3;
+        double db = 0;// 分贝
+        if (ratio > 1)
+            db = 20 * Math.log10(ratio);
+
+        if (db > 60) {
+            mHasVoice = true;
+        }
+        Log.e("gqiu", "当前分贝" + db);
     }
 }

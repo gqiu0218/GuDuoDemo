@@ -1,16 +1,11 @@
 package com.singingkungfu.sing.ui;
 
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,10 +20,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.singingkungfu.sing.R;
+import com.singingkungfu.sing.listener.AgainTestListener;
 import com.singingkungfu.sing.listener.AnalyzeVoiceListener;
-import com.singingkungfu.sing.net.DownLoadFileUtils;
-import com.singingkungfu.sing.net.NetUtils;
-import com.singingkungfu.sing.receiver.HeadsetReceiver;
+import com.singingkungfu.sing.listener.BackListener;
 import com.singingkungfu.sing.share.ShareDialog;
 import com.singingkungfu.sing.share.ShareListener;
 import com.singingkungfu.sing.task.ScreenFiveTask;
@@ -37,20 +31,17 @@ import com.singingkungfu.sing.task.ScreenOneTask;
 import com.singingkungfu.sing.task.ScreenSixTask;
 import com.singingkungfu.sing.task.ScreenThreeTask;
 import com.singingkungfu.sing.task.ScreenTwoTask;
-import com.singingkungfu.sing.utils.RecordUtils;
 import com.singingkungfu.sing.widget.CustomVideoView;
 import com.umeng.socialize.UMShareAPI;
 
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements CustomVideoView.OnCorveHideListener, MediaPlayer.OnCompletionListener, HeadsetReceiver.HeadSetConnectListener, View.OnClickListener, DownLoadFileUtils.DownLoadedListener, AnalyzeVoiceListener, ShareListener {
+public class MainActivity extends AppCompatActivity implements CustomVideoView.OnCorveHideListener, MediaPlayer.OnCompletionListener, View.OnClickListener, AnalyzeVoiceListener, ShareListener, BackListener, AgainTestListener {
     private CustomVideoView mVideoView;
     private RelativeLayout mControlView;
     private ImageView backIv;
-    private int mIndex = -1;
-    private HeadsetReceiver mReceiver;
-    private boolean mConnectedHeadset;
-    private AudioManager mAudioManager;
+    private int mIndex = 1;
+
     private Handler mHandler = new Handler();
     private ScreenOneTask mScreenOneTask;
     private ScreenTwoTask mScreenTwoTask;
@@ -59,12 +50,11 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
     private ScreenFiveTask mScreenFiveTask;
     private ScreenSixTask mScreenSixTask;
 
-    //step zero
-    private TextView mDownloadProgressTv;
     private List<String> mCaches;
 
     //step screen
     private LinearLayout actionLayout;
+    private Button nextBtn;
 
     //step four
     private RelativeLayout mProgressLayout;
@@ -79,7 +69,7 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
     private TextView mScoreTv;
     private ProgressBar mHighProgressBar, mLowProgressBar, mIntonationProgressBar, mBreathProgressBar, mRhythmProgressBar;
     private TextView mHighScoreTv, mLowScoreTv, mIntonationScoreTv, mBreathScoreTv, mRhythmScoreTv;
-
+    private boolean mResetScreen;   //是否重置场景
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,32 +87,8 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
     }
 
     private void initView() {
-        mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        IntentFilter filter = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
-        mReceiver = new HeadsetReceiver(this);
-        registerReceiver(mReceiver, filter);
-
-        //下载视频文件
-        DownLoadFileUtils utils = new DownLoadFileUtils(this);
-        List<String> cacheFiles = utils.getCacheFiles();
-        if (cacheFiles.size() == 0) {
-            downloadView();
-
-            //需要下载
-            if (NetUtils.isConnect(this)) {
-                //网络错误
-                mDownloadProgressTv.setText(R.string.network_error);
-                return;
-            }
-            utils.download(mDownloadProgressTv, this);
-
-        } else {
-            //直接开始播放第0个片段
-            mCaches = cacheFiles;
-//            playStepZeroView();
-            playStepSixView();
-        }
-
+        mCaches = getIntent().getStringArrayListExtra(DownLoadResourceActivity.DATA);
+        playStepOneView();
     }
 
 
@@ -179,13 +145,6 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
         }
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (mReceiver != null) {
-            unregisterReceiver(mReceiver);
-        }
-    }
 
     @Override
     public void requestHide() {
@@ -194,16 +153,14 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
 
     @Override
     public void onCompletion(MediaPlayer mp) {
-        if (mIndex == -1) {
-            mVideoView.start();
-            return;
-        }
         //播放完成,判断当前进度
         mVideoView.pause();
         switch (mIndex) {
             case 1: //播放第1段，监听耳机插入状态
                 mHandler.removeCallbacks(mScreenOneTask);
-                mIndex = playStepTwoView();
+                if (mScreenOneTask.isCheckVoice()) {
+                    mIndex = playStepTwoView();
+                }
                 break;
             case 2: //播放第2段
                 mHandler.removeCallbacks(mScreenTwoTask);
@@ -228,48 +185,14 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
         }
     }
 
-
-    //检查耳机,录音权限
-    private boolean check() {
-        mConnectedHeadset = mAudioManager.isWiredHeadsetOn();
-        if (!mConnectedHeadset) {
-            //不存在耳机
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("提示");
-            builder.setMessage("检测到没有耳机，请插入耳机");
-            builder.setPositiveButton("我知道了", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                }
-            });
-            builder.show();
-            return false;
-        } else {
-            return RecordUtils.isHasPermission(this);
-        }
-    }
-
-    @Override
-    public void headsetState(boolean connectState) {
-        mConnectedHeadset = connectState;
-    }
-
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.back_iv:
-                exit();
-                break;
-            case R.id.start_test_btn: //开始测试
-                if (!check()) {
-                    return;
-                }
-                mIndex = 1;
-                playStepOneView();
+                onBack();
                 break;
             case R.id.reset_test_btn:   //重新测试
-                mIndex = playStepOneView();
+
                 break;
             case R.id.share_iv:         //分享
                 ShareDialog dialog = new ShareDialog(this, this);
@@ -279,23 +202,7 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
                 Toast.makeText(this, "功能待加入", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.reset_btn:       //重新开始
-                switch (mIndex) {
-                    case 1:
-                        mIndex = playStepOneView();
-                        break;
-                    case 2:
-                        mIndex = playStepTwoView();
-                        break;
-                    case 3:
-                        mIndex = playStepThreeView();
-                        break;
-                    case 4:
-                        mIndex = playStepFourView();
-                        break;
-                    case 5:
-                        mIndex = playStepFiveView();
-                        break;
-                }
+                reset();
                 break;
             case R.id.next_btn:          //下一关
                 switch (mIndex) {
@@ -319,66 +226,13 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
         }
     }
 
-    private void exit() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("提示");
-        builder.setMessage("确定要退出吗？");
-        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-        builder.setPositiveButton("退出", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-                finish();
-            }
-        });
-        builder.show();
-    }
-
-    @Override
-    public void downLoaded(List<String> result) {
-        mCaches = result;
-        playStepZeroView();
-    }
-
-    @Override
-    public void downLoadFailure() {
-        Toast.makeText(this, "下载失败", Toast.LENGTH_SHORT).show();
-    }
-
-
-    //下载view-下载进度
-    private void downloadView() {
-        View stepView = LayoutInflater.from(this).inflate(R.layout.item_download, mControlView, false);
-        mDownloadProgressTv = (TextView) stepView.findViewById(R.id.download_progress_tv);
-        mControlView.addView(stepView);
-        setPlaySource("android.resource://" + getPackageName() + "/" + R.raw.start_video);
-        mVideoView.start();
-    }
-
-
-    //步骤0-view-开始测试
-    private void stepZeroView() {
-        View stepView = LayoutInflater.from(this).inflate(R.layout.item_guide_step_zero, mControlView, false);
-        stepView.findViewById(R.id.start_test_btn).setOnClickListener(this);
-        mControlView.addView(stepView);
-    }
-
-
     private void addEndView() {
         removeCurrentStep();
         View stepView = LayoutInflater.from(this).inflate(R.layout.item_end_view, mControlView, false);
         actionLayout = (LinearLayout) stepView.findViewById(R.id.action_layout);
         stepView.findViewById(R.id.reset_btn).setOnClickListener(this);
-        stepView.findViewById(R.id.next_btn).setOnClickListener(this);
-        if (mIndex == 5) {
-            ((Button) stepView.findViewById(R.id.next_btn)).setText(R.string.create_result);
-            ((Button) stepView.findViewById(R.id.next_btn)).setTextColor(ContextCompat.getColor(this, R.color.color_51d193));
-        }
+        nextBtn = (Button) stepView.findViewById(R.id.next_btn);
+        nextBtn.setOnClickListener(this);
         mControlView.addView(stepView);
     }
 
@@ -405,42 +259,21 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
     }
 
 
-    //播放片段0
-    private void playStepZeroView() {
-        backIv.setVisibility(View.VISIBLE);
-        mIndex = 0;
-        setPlaySource(mCaches.get(0));
-        mVideoView.start();
-        removeCurrentStep();
-        stepZeroView();
-    }
-
-
     //播放片段1
-    private int playStepOneView() {
-        boolean isCheck = check();
-        if (!isCheck) {
-            return mIndex;
-        }
-
+    private void playStepOneView() {
+        mIndex = 1;
         setPlaySource(mCaches.get(1));
         mVideoView.start();
         removeCurrentStep();
         addEndView();
-
-        mScreenOneTask = new ScreenOneTask(this, actionLayout, mHandler);
+        nextBtn.setTextColor(ContextCompat.getColor(this, R.color.color_8159f3));
+        mScreenOneTask = new ScreenOneTask(this, actionLayout, mHandler, this, this);
         mHandler.post(mScreenOneTask);
         mVideoView.start();
-        return 1;
     }
 
     //播放片段2
     private int playStepTwoView() {
-        boolean isCheck = check();
-        if (!isCheck) {
-            return mIndex;
-        }
-
         setPlaySource(mCaches.get(2));
         mVideoView.start();
         removeCurrentStep();
@@ -454,11 +287,6 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
 
     //播放片段3
     private int playStepThreeView() {
-        boolean isCheck = check();
-        if (!isCheck) {
-            return mIndex;
-        }
-
         setPlaySource(mCaches.get(3));
         mVideoView.start();
         removeCurrentStep();
@@ -473,11 +301,6 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
 
     //播放片段4
     private int playStepFourView() {
-        boolean isCheck = check();
-        if (!isCheck) {
-            return mIndex;
-        }
-
         setPlaySource(mCaches.get(4));
         mVideoView.start();
         addStepFourView();
@@ -490,11 +313,6 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
 
     //播放片段5
     private int playStepFiveView() {
-        boolean isCheck = check();
-        if (!isCheck) {
-            return mIndex;
-        }
-
         setPlaySource(mCaches.get(5));
         mVideoView.start();
         removeCurrentStep();
@@ -508,11 +326,6 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
 
     //播放片段6
     private int playStepSixView() {
-        boolean isCheck = check();
-        if (!isCheck) {
-            return mIndex;
-        }
-
         setPlaySource(mCaches.get(6));
         mVideoView.start();
         addAnalyzeVoiceView();
@@ -564,6 +377,30 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
         playStepSevenView();
     }
 
+
+    private void onBack() {
+        switch (mIndex) {
+            case 1:
+                if (mResetScreen) {
+                    mVideoView.seekTo(0);
+                    mVideoView.start();
+                } else {
+                    finish();
+                }
+                break;
+        }
+    }
+
+
+    private void reset() {
+        switch (mIndex) {
+            case 1:
+                mVideoView.seekTo(0);
+                mVideoView.start();
+                break;
+        }
+    }
+
     @Override
     public void onStartShare() {
     }
@@ -574,5 +411,15 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
 
     @Override
     public void onFinishShare() {
+    }
+
+    @Override
+    public void onBackState(boolean resetScreen) {
+        mResetScreen = resetScreen;
+    }
+
+    @Override
+    public void onAgainTest() {
+        reset();
     }
 }

@@ -67,6 +67,14 @@ public class FileUtils {
     }
 
 
+    public static boolean isVoiceFileExist(Context context, int screen, int index) {
+        String rootPath = getVoicePath(context);
+        String filePath = rootPath + File.separator + "voice" + screen + "_" + index + ".amr";
+        File file = new File(filePath);
+        return file.exists();
+    }
+
+
     public static String getFileName(String downloadUrl) {
         if (TextUtils.isEmpty(downloadUrl)) {
             return "";

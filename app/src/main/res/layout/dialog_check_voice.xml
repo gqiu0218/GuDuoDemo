@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/shape_dialog"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="声音检测异常"
+            android:textColor="@color/color_333333"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="未正常检测到声音，请重新测试"
+            android:textColor="@color/color_858585"
+            android:textSize="13sp" />
+    </LinearLayout>
+
+
+    <com.singingkungfu.sing.widget.CustomButton
+        android:id="@+id/reset_btn"
+        style="?borderlessButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:padding="0px"
+        android:text="重新测试"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        app:normalSolid="@color/color_8159F3"
+        app:pressedSolid="@color/color_321862"
+        app:roundButtonLeftBottomRadius="8dp"
+        app:roundButtonRightBottomRadius="8dp"
+        app:strokeWidth="0dp" />
+
+</LinearLayout>
