@@ -39,8 +39,8 @@
         android:text="重新测试"
         android:textColor="@color/white"
         android:textSize="14sp"
-        app:normalSolid="@color/color_8159F3"
-        app:pressedSolid="@color/color_321862"
+        app:normalSolid="@color/color_8159f3"
+        app:pressedSolid="@color/color_6f43e2"
         app:roundButtonLeftBottomRadius="8dp"
         app:roundButtonRightBottomRadius="8dp"
         app:strokeWidth="0dp" />
