@@ -2,6 +2,7 @@ package com.singingkungfu.sing.task;
 
 import android.content.Context;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 
@@ -74,10 +75,12 @@ public class ScreenOneTask implements Runnable {
 
         if (progress == 42) {
             boolean ok = isCheckVoice();
+            Log.e("gqiu", "是否通过:" + ok);
             if (ok) {
                 mActionLayout.setVisibility(View.VISIBLE);
             } else {
                 //说明其中某段没有录制,弹窗显示
+                mTestListener.stopVideo();
                 CheckVoiceDialog dialog = new CheckVoiceDialog(mContext, mTestListener);
                 dialog.show();
             }

@@ -159,24 +159,32 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
             case 1: //播放第1段，监听耳机插入状态
                 mHandler.removeCallbacks(mScreenOneTask);
                 if (mScreenOneTask.isCheckVoice()) {
-                    mIndex = playStepTwoView();
+                    playStepTwoView();
                 }
                 break;
             case 2: //播放第2段
                 mHandler.removeCallbacks(mScreenTwoTask);
-                mIndex = playStepThreeView();
+                if (mScreenTwoTask.isCheckVoice()) {
+                    playStepThreeView();
+                }
                 break;
             case 3: //播放第3段
                 mHandler.removeCallbacks(mScreenThreeTask);
-                mIndex = playStepFourView();
+                if (mScreenThreeTask.isCheckVoice()) {
+                    playStepFourView();
+                }
                 break;
             case 4: //播放第4段
                 mHandler.removeCallbacks(mScreenFourTask);
-                mIndex = playStepFiveView();
+                if (mScreenFourTask.isCheckVoice()) {
+                    playStepFiveView();
+                }
                 break;
             case 5: //播放第5段
                 mHandler.removeCallbacks(mScreenFiveTask);
-                mIndex = playStepSixView();
+                if (mScreenFiveTask.isCheckVoice()) {
+                    playStepSixView();
+                }
                 break;
             case 6: //播放第6段
                 mHandler.removeCallbacks(mScreenSixTask);
@@ -207,19 +215,19 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
             case R.id.next_btn:          //下一关
                 switch (mIndex) {
                     case 1:
-                        mIndex = playStepTwoView();
+                        playStepTwoView();
                         break;
                     case 2:
-                        mIndex = playStepThreeView();
+                        playStepThreeView();
                         break;
                     case 3:
-                        mIndex = playStepFourView();
+                        playStepFourView();
                         break;
                     case 4:
-                        mIndex = playStepFiveView();
+                        playStepFiveView();
                         break;
                     case 5:
-                        mIndex = playStepSixView();
+                        playStepSixView();
                         break;
                 }
                 break;
@@ -273,67 +281,67 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
     }
 
     //播放片段2
-    private int playStepTwoView() {
+    private void playStepTwoView() {
+        mIndex = 2;
         setPlaySource(mCaches.get(2));
         mVideoView.start();
         removeCurrentStep();
         addEndView();
-
-        mScreenTwoTask = new ScreenTwoTask(this, actionLayout, mHandler);
+        nextBtn.setTextColor(ContextCompat.getColor(this, R.color.color_ff9437));
+        mScreenTwoTask = new ScreenTwoTask(this, actionLayout, mHandler, this, this);
         mHandler.post(mScreenTwoTask);
         mVideoView.start();
-        return 2;
     }
 
     //播放片段3
-    private int playStepThreeView() {
+    private void playStepThreeView() {
+        mIndex = 3;
         setPlaySource(mCaches.get(3));
         mVideoView.start();
         removeCurrentStep();
         addEndView();
-
-        mScreenThreeTask = new ScreenThreeTask(this, actionLayout, mHandler);
+        nextBtn.setTextColor(ContextCompat.getColor(this, R.color.color_f67353));
+        mScreenThreeTask = new ScreenThreeTask(this, actionLayout, mHandler, this, this);
         mHandler.post(mScreenThreeTask);
         mVideoView.start();
-
-        return 3;
     }
 
     //播放片段4
-    private int playStepFourView() {
+    private void playStepFourView() {
+        mIndex = 4;
         setPlaySource(mCaches.get(4));
         mVideoView.start();
         addStepFourView();
-
-        mScreenFourTask = new ScreenFourTask(this, actionLayout, mProgressLayout, mCurrentProgressLayout, mHandler);
+        nextBtn.setTextColor(ContextCompat.getColor(this, R.color.color_4fc8ec));
+        mScreenFourTask = new ScreenFourTask(this, actionLayout, mProgressLayout, mCurrentProgressLayout, this, this, mHandler);
         mHandler.post(mScreenFourTask);
         mVideoView.start();
-        return 4;
     }
 
     //播放片段5
-    private int playStepFiveView() {
+    private void playStepFiveView() {
+        mIndex = 5;
         setPlaySource(mCaches.get(5));
         mVideoView.start();
         removeCurrentStep();
         addEndView();
-
-        mScreenFiveTask = new ScreenFiveTask(this, actionLayout, mHandler);
+        nextBtn.setTextColor(ContextCompat.getColor(this, R.color.color_1ebe80));
+        nextBtn.setText(R.string.create_result);
+        mScreenFiveTask = new ScreenFiveTask(this, actionLayout, this, this, mHandler);
         mHandler.post(mScreenFiveTask);
         mVideoView.start();
-        return 5;
     }
 
     //播放片段6
-    private int playStepSixView() {
+    private void playStepSixView() {
+        backIv.setVisibility(View.GONE);
+        mIndex = 6;
         setPlaySource(mCaches.get(6));
         mVideoView.start();
         addAnalyzeVoiceView();
 
         mScreenSixTask = new ScreenSixTask(mHandler, analyzeVoiceTv, this);
         mHandler.post(mScreenSixTask);
-
-        return 6;
     }
 
 
@@ -388,6 +396,40 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
                     finish();
                 }
                 break;
+            case 2:
+                if (mResetScreen) {
+                    mVideoView.seekTo(0);
+                    mVideoView.start();
+                } else {
+                    playStepOneView();
+                }
+                break;
+
+            case 3:
+                if (mResetScreen) {
+                    mVideoView.seekTo(0);
+                    mVideoView.start();
+                } else {
+                    playStepTwoView();
+                }
+                break;
+
+            case 4:
+                if (mResetScreen) {
+                    mVideoView.seekTo(0);
+                    mVideoView.start();
+                } else {
+                    playStepThreeView();
+                }
+                break;
+            case 5:
+                if (mResetScreen) {
+                    mVideoView.seekTo(0);
+                    mVideoView.start();
+                } else {
+                    playStepFourView();
+                }
+                break;
         }
     }
 
@@ -395,8 +437,22 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
     private void reset() {
         switch (mIndex) {
             case 1:
-                mVideoView.seekTo(0);
-                mVideoView.start();
+                playStepOneView();
+                break;
+            case 2:
+                playStepTwoView();
+                break;
+            case 3:
+                playStepThreeView();
+                break;
+            case 4:
+                playStepFourView();
+                break;
+            case 5:
+                playStepFiveView();
+                break;
+            case 6:
+                playStepSixView();
                 break;
         }
     }
@@ -421,5 +477,10 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
     @Override
     public void onAgainTest() {
         reset();
+    }
+
+    @Override
+    public void stopVideo() {
+        mVideoView.pause();
     }
 }

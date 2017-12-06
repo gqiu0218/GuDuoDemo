@@ -9,7 +9,6 @@ import android.support.v4.content.ContextCompat;
 import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.TextView;
 
 import com.singingkungfu.sing.R;
 
@@ -71,8 +70,8 @@ public class UnitView extends View {
 
         int centerY = height / 2;
 
-        int minH = (int) (height * 0.3f);
-        int maxH = (int) (height * 0.45f);
+        int minH = (int) (height * 0.15f);
+        int maxH = (int) (height * 0.35f);
         int cellW = width / TOTAL;
 
         int index = 1;
