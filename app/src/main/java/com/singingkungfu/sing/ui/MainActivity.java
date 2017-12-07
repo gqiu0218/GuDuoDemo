@@ -23,7 +23,6 @@ import com.singingkungfu.sing.R;
 import com.singingkungfu.sing.listener.AgainTestListener;
 import com.singingkungfu.sing.listener.AnalyzeVoiceListener;
 import com.singingkungfu.sing.listener.BackListener;
-import com.singingkungfu.sing.share.ShareDialog;
 import com.singingkungfu.sing.share.ShareListener;
 import com.singingkungfu.sing.task.ScreenFiveTask;
 import com.singingkungfu.sing.task.ScreenFourTask;
@@ -31,6 +30,7 @@ import com.singingkungfu.sing.task.ScreenOneTask;
 import com.singingkungfu.sing.task.ScreenSixTask;
 import com.singingkungfu.sing.task.ScreenThreeTask;
 import com.singingkungfu.sing.task.ScreenTwoTask;
+import com.singingkungfu.sing.utils.ShareUtils;
 import com.singingkungfu.sing.widget.CustomVideoView;
 import com.umeng.socialize.UMShareAPI;
 
@@ -88,7 +88,8 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
 
     private void initView() {
         mCaches = getIntent().getStringArrayListExtra(DownLoadResourceActivity.DATA);
-        playStepOneView();
+//        playStepOneView();
+        playStepSevenView();
     }
 
 
@@ -126,23 +127,23 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
     protected void onResume() {
         super.onResume();
         mVideoView.start();
-        switch (mIndex) {
-            case 1:
-                mScreenOneTask.isStop(false);
-                break;
-            case 2:
-                mScreenTwoTask.isStop(false);
-                break;
-            case 3:
-                mScreenThreeTask.isStop(false);
-                break;
-            case 4:
-                mScreenFourTask.isStop(false);
-                break;
-            case 5:
-                mScreenFiveTask.isStop(false);
-                break;
-        }
+//        switch (mIndex) {
+//            case 1:
+//                mScreenOneTask.isStop(false);
+//                break;
+//            case 2:
+//                mScreenTwoTask.isStop(false);
+//                break;
+//            case 3:
+//                mScreenThreeTask.isStop(false);
+//                break;
+//            case 4:
+//                mScreenFourTask.isStop(false);
+//                break;
+//            case 5:
+//                mScreenFiveTask.isStop(false);
+//                break;
+//        }
     }
 
 
@@ -203,8 +204,7 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
                 playStepFiveView();
                 break;
             case R.id.share_iv:         //分享
-                ShareDialog dialog = new ShareDialog(this, this);
-                dialog.show();
+                ShareUtils.showShare(this);
                 break;
             case R.id.finish_btn:      //完成测试
                 Toast.makeText(this, "功能待加入", Toast.LENGTH_SHORT).show();
@@ -391,6 +391,7 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
         switch (mIndex) {
             case 1:
                 if (mResetScreen) {
+                    mResetScreen = false;
                     mVideoView.seekTo(0);
                     mVideoView.start();
                 } else {
@@ -399,6 +400,7 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
                 break;
             case 2:
                 if (mResetScreen) {
+                    mResetScreen = false;
                     mVideoView.seekTo(0);
                     mVideoView.start();
                 } else {
@@ -408,6 +410,7 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
 
             case 3:
                 if (mResetScreen) {
+                    mResetScreen = false;
                     mVideoView.seekTo(0);
                     mVideoView.start();
                 } else {
@@ -417,6 +420,7 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
 
             case 4:
                 if (mResetScreen) {
+                    mResetScreen = false;
                     mVideoView.seekTo(0);
                     mVideoView.start();
                 } else {
@@ -425,6 +429,7 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
                 break;
             case 5:
                 if (mResetScreen) {
+                    mResetScreen = false;
                     mVideoView.seekTo(0);
                     mVideoView.start();
                 } else {

@@ -20,7 +20,7 @@ public class UnitView extends View {
     private Paint mPaint;
     private TextPaint mUnitPaint;
     private int mMinSize, mMaxSize;
-    private static final int TOTAL = 30;
+    private static final int TOTAL = 38;
     private static final int TXT_SIZE = 14;
 
     private int mTxtSize;
@@ -93,6 +93,8 @@ public class UnitView extends View {
                 case 15:
                 case 20:
                 case 25:
+                case 30:
+                case 35:
                     String txt = index + "s";
                     canvas.drawText(txt, startX, centerY + mTxtSize / 3, mUnitPaint);
                 default:

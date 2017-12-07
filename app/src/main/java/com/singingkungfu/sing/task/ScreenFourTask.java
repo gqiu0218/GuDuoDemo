@@ -63,13 +63,13 @@ public class ScreenFourTask implements Runnable {
             mRecordUtils.initRecord(FileUtils.getVoicePath(mContext, 4, 1));
         }
 
-        if (progress == 48000) {
+        if (progress == 56000) {
             mProgressLayout.setVisibility(View.GONE);
             mRecordUtils.stopRecord();
         }
 
 
-        if (progress == 50000) {
+        if (progress == 57000) {
             boolean ok = isCheckVoice();
             if (ok) {
                 mActionLayout.setVisibility(View.VISIBLE);
@@ -82,7 +82,7 @@ public class ScreenFourTask implements Runnable {
         }
 
         ViewGroup.LayoutParams params = mCurrentProgressLayout.getLayoutParams();
-        params.width = (int) ((float) mCurrentProgress / 30000 * mTotal);
+        params.width = (int) ((float) mCurrentProgress / 38000 * mTotal);
         mCurrentProgressLayout.setLayoutParams(params);
         if (!mStopProgress) {
             progress += 50;
