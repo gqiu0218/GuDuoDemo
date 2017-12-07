@@ -124,7 +124,9 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
     @Override
     protected void onResume() {
         super.onResume();
-        mVideoView.start();
+        if (mIndex != 7) {
+            mVideoView.start();
+        }
         switch (mIndex) {
             case 1:
                 mScreenOneTask.isStop(false);
