@@ -23,7 +23,6 @@ import com.singingkungfu.sing.R;
 import com.singingkungfu.sing.listener.AgainTestListener;
 import com.singingkungfu.sing.listener.AnalyzeVoiceListener;
 import com.singingkungfu.sing.listener.BackListener;
-import com.singingkungfu.sing.share.ShareListener;
 import com.singingkungfu.sing.task.ScreenFiveTask;
 import com.singingkungfu.sing.task.ScreenFourTask;
 import com.singingkungfu.sing.task.ScreenOneTask;
@@ -32,11 +31,10 @@ import com.singingkungfu.sing.task.ScreenThreeTask;
 import com.singingkungfu.sing.task.ScreenTwoTask;
 import com.singingkungfu.sing.utils.ShareUtils;
 import com.singingkungfu.sing.widget.CustomVideoView;
-import com.umeng.socialize.UMShareAPI;
 
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements CustomVideoView.OnCorveHideListener, MediaPlayer.OnCompletionListener, View.OnClickListener, AnalyzeVoiceListener, ShareListener, BackListener, AgainTestListener {
+public class MainActivity extends AppCompatActivity implements CustomVideoView.OnCorveHideListener, MediaPlayer.OnCompletionListener, View.OnClickListener, AnalyzeVoiceListener, BackListener, AgainTestListener {
     private CustomVideoView mVideoView;
     private RelativeLayout mControlView;
     private ImageView backIv;
@@ -89,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
     private void initView() {
         mCaches = getIntent().getStringArrayListExtra(DownLoadResourceActivity.DATA);
 //        playStepOneView();
-        playStepSevenView();
+        playStepFourView();
     }
 
 
@@ -127,23 +125,23 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
     protected void onResume() {
         super.onResume();
         mVideoView.start();
-//        switch (mIndex) {
-//            case 1:
-//                mScreenOneTask.isStop(false);
-//                break;
-//            case 2:
-//                mScreenTwoTask.isStop(false);
-//                break;
-//            case 3:
-//                mScreenThreeTask.isStop(false);
-//                break;
-//            case 4:
-//                mScreenFourTask.isStop(false);
-//                break;
-//            case 5:
-//                mScreenFiveTask.isStop(false);
-//                break;
-//        }
+        switch (mIndex) {
+            case 1:
+                mScreenOneTask.isStop(false);
+                break;
+            case 2:
+                mScreenTwoTask.isStop(false);
+                break;
+            case 3:
+                mScreenThreeTask.isStop(false);
+                break;
+            case 4:
+                mScreenFourTask.isStop(false);
+                break;
+            case 5:
+                mScreenFiveTask.isStop(false);
+                break;
+        }
     }
 
 
@@ -201,7 +199,7 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
                 onBack();
                 break;
             case R.id.reset_test_btn:   //重新测试
-                playStepFiveView();
+                playStepTwoView();
                 break;
             case R.id.share_iv:         //分享
                 ShareUtils.showShare(this);
@@ -250,8 +248,9 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
         mProgressLayout = (RelativeLayout) stepView.findViewById(R.id.progress_layout);
         mCurrentProgressLayout = stepView.findViewById(R.id.current_progress);
         actionLayout = (LinearLayout) stepView.findViewById(R.id.action_layout);
+        nextBtn = (Button) stepView.findViewById(R.id.next_btn);
         stepView.findViewById(R.id.reset_btn).setOnClickListener(this);
-        stepView.findViewById(R.id.next_btn).setOnClickListener(this);
+        nextBtn.setOnClickListener(this);
         mControlView.addView(stepView);
     }
 
@@ -274,7 +273,12 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
         mVideoView.start();
         removeCurrentStep();
         addEndView();
+        actionLayout.setVisibility(View.GONE);
         nextBtn.setTextColor(ContextCompat.getColor(this, R.color.color_8159f3));
+        if (mScreenOneTask != null) {
+            mHandler.removeCallbacks(mScreenOneTask);
+            mScreenOneTask = null;
+        }
         mScreenOneTask = new ScreenOneTask(this, actionLayout, mHandler, this, this);
         mHandler.post(mScreenOneTask);
         mVideoView.start();
@@ -287,7 +291,13 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
         mVideoView.start();
         removeCurrentStep();
         addEndView();
+        actionLayout.setVisibility(View.GONE);
         nextBtn.setTextColor(ContextCompat.getColor(this, R.color.color_ff9437));
+
+        if (mScreenTwoTask != null) {
+            mHandler.removeCallbacks(mScreenTwoTask);
+            mScreenTwoTask = null;
+        }
         mScreenTwoTask = new ScreenTwoTask(this, actionLayout, mHandler, this, this);
         mHandler.post(mScreenTwoTask);
         mVideoView.start();
@@ -300,7 +310,14 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
         mVideoView.start();
         removeCurrentStep();
         addEndView();
+        actionLayout.setVisibility(View.GONE);
         nextBtn.setTextColor(ContextCompat.getColor(this, R.color.color_f67353));
+
+        if (mScreenThreeTask != null) {
+            mHandler.removeCallbacks(mScreenThreeTask);
+            mScreenThreeTask = null;
+        }
+
         mScreenThreeTask = new ScreenThreeTask(this, actionLayout, mHandler, this, this);
         mHandler.post(mScreenThreeTask);
         mVideoView.start();
@@ -312,7 +329,15 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
         setPlaySource(mCaches.get(4));
         mVideoView.start();
         addStepFourView();
+        actionLayout.setVisibility(View.GONE);
+
         nextBtn.setTextColor(ContextCompat.getColor(this, R.color.color_4fc8ec));
+
+        if (mScreenFourTask != null) {
+            mHandler.removeCallbacks(mScreenFourTask);
+            mScreenFourTask = null;
+        }
+
         mScreenFourTask = new ScreenFourTask(this, actionLayout, mProgressLayout, mCurrentProgressLayout, this, this, mHandler);
         mHandler.post(mScreenFourTask);
         mVideoView.start();
@@ -325,8 +350,17 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
         mVideoView.start();
         removeCurrentStep();
         addEndView();
+        actionLayout.setVisibility(View.GONE);
+
         nextBtn.setTextColor(ContextCompat.getColor(this, R.color.color_1ebe80));
         nextBtn.setText(R.string.create_result);
+
+
+        if (mScreenFiveTask != null) {
+            mHandler.removeCallbacks(mScreenFiveTask);
+            mScreenFiveTask = null;
+        }
+
         mScreenFiveTask = new ScreenFiveTask(this, actionLayout, this, this, mHandler);
         mHandler.post(mScreenFiveTask);
         mVideoView.start();
@@ -340,6 +374,10 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
         mVideoView.start();
         addAnalyzeVoiceView();
 
+        if (mScreenSixTask != null) {
+            mHandler.removeCallbacks(mScreenSixTask);
+            mScreenSixTask = null;
+        }
         mScreenSixTask = new ScreenSixTask(mHandler, analyzeVoiceTv, this);
         mHandler.post(mScreenSixTask);
     }
@@ -374,7 +412,6 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data);
     }
 
 
@@ -388,6 +425,9 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
 
 
     private void onBack() {
+        if (actionLayout != null) {
+            actionLayout.setVisibility(View.GONE);
+        }
         switch (mIndex) {
             case 1:
                 if (mResetScreen) {
@@ -407,7 +447,6 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
                     playStepOneView();
                 }
                 break;
-
             case 3:
                 if (mResetScreen) {
                     mResetScreen = false;
@@ -417,7 +456,6 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
                     playStepTwoView();
                 }
                 break;
-
             case 4:
                 if (mResetScreen) {
                     mResetScreen = false;
@@ -461,18 +499,6 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
                 playStepSixView();
                 break;
         }
-    }
-
-    @Override
-    public void onStartShare() {
-    }
-
-    @Override
-    public void onCancelShare() {
-    }
-
-    @Override
-    public void onFinishShare() {
     }
 
     @Override

@@ -28,6 +28,7 @@ public class ScreenFourTask implements Runnable {
     private BackListener mListener;
     private AgainTestListener mTestListener;
     private int mTotal;
+    private CheckVoiceDialog mDialog;
 
     public ScreenFourTask(Context context, LinearLayout actionLayout, RelativeLayout progressLayout, View currentProgress, BackListener listener, AgainTestListener testListener, Handler handler) {
         mContext = context;
@@ -57,11 +58,17 @@ public class ScreenFourTask implements Runnable {
         if (progress == 16000) {
             mListener.onBackState(true);
         }
-        mRecordUtils.updateMicStatus();
+
         if (progress == 18000) {
             mProgressLayout.setVisibility(View.VISIBLE);
             mRecordUtils.initRecord(FileUtils.getVoicePath(mContext, 4, 1));
         }
+
+        boolean interrupt = mRecordUtils.updateMicStatus();
+        if (interrupt) {
+            mRecordUtils.stopRecord();
+        }
+
 
         if (progress == 56000) {
             mProgressLayout.setVisibility(View.GONE);
@@ -69,15 +76,19 @@ public class ScreenFourTask implements Runnable {
         }
 
 
-        if (progress == 57000) {
+        if (progress == 57000 || interrupt) {
             boolean ok = isCheckVoice();
             if (ok) {
                 mActionLayout.setVisibility(View.VISIBLE);
             } else {
                 //说明其中某段没有录制,弹窗显示
                 mTestListener.stopVideo();
-                CheckVoiceDialog dialog = new CheckVoiceDialog(mContext, mTestListener);
-                dialog.show();
+
+                if (mDialog == null || !mDialog.isShowing()) {
+                    mDialog = new CheckVoiceDialog(mContext, mTestListener);
+                    mDialog.show();
+                }
+
             }
         }
 
@@ -87,7 +98,7 @@ public class ScreenFourTask implements Runnable {
         if (!mStopProgress) {
             progress += 50;
 
-            if (progress >= 18000) {
+            if (progress >= 18000 && !interrupt) {
                 mCurrentProgress += 50;
             }
         }
@@ -99,11 +110,8 @@ public class ScreenFourTask implements Runnable {
     public boolean isCheckVoice() {
         boolean isHasVoice = true;
         //如果某一段音频是静音的话，录制结束后直接删除，所以直接检查文件是否足够就行了
-        for (int i = 1; i < 4; i++) {
-            if (!FileUtils.isVoiceFileExist(mContext, 1, i)) {
-                isHasVoice = false;
-                break;
-            }
+        if (!FileUtils.isVoiceFileExist(mContext, 4, 1)) {
+            isHasVoice = false;
         }
         return isHasVoice;
     }

@@ -86,8 +86,8 @@ public class ScreenThreeTask implements Runnable {
     public boolean isCheckVoice() {
         boolean isHasVoice = true;
         //如果某一段音频是静音的话，录制结束后直接删除，所以直接检查文件是否足够就行了
-        for (int i = 1; i < 4; i++) {
-            if (!FileUtils.isVoiceFileExist(mContext, 1, i)) {
+        for (int i = 1; i < 3; i++) {
+            if (!FileUtils.isVoiceFileExist(mContext, 3, i)) {
                 isHasVoice = false;
                 break;
             }

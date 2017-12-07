@@ -324,7 +324,7 @@
                     android:background="@drawable/selector_white_btn"
                     android:padding="0px"
                     android:text="@string/test_finsih"
-                    android:textColor="@color/color_ff9437"
+                    android:textColor="@color/color_8152f7"
                     android:textSize="14sp" />
             </LinearLayout>
 

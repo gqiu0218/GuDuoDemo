@@ -48,6 +48,10 @@
             android:keepScreenOn="true"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".ui.PrepareActivity"
+            android:keepScreenOn="true"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".ui.MainActivity"
             android:keepScreenOn="true"
             android:screenOrientation="portrait" />

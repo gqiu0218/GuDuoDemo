@@ -2,6 +2,7 @@ package com.singingkungfu.sing.ui;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -21,7 +22,7 @@ import com.singingkungfu.sing.widget.CustomVideoView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DownLoadResourceActivity extends AppCompatActivity implements DownLoadFileUtils.DownLoadedListener, View.OnClickListener {
+public class DownLoadResourceActivity extends AppCompatActivity implements DownLoadFileUtils.DownLoadedListener, View.OnClickListener, MediaPlayer.OnCompletionListener {
     private CustomVideoView mVideoView;
     private TextView mProgresTv;
 
@@ -35,6 +36,7 @@ public class DownLoadResourceActivity extends AppCompatActivity implements DownL
         setContentView(R.layout.activity_download);
         findViewById(R.id.close_iv).setOnClickListener(this);
         mVideoView = (CustomVideoView) findViewById(R.id.videoView);
+        mVideoView.setOnCompletionListener(this);
         mProgresTv = (TextView) findViewById(R.id.download_progress_tv);
         init();
     }
@@ -66,7 +68,7 @@ public class DownLoadResourceActivity extends AppCompatActivity implements DownL
     }
 
     private void jump(List<String> list) {
-        Intent intent = new Intent(this, StartActivity.class);
+        Intent intent = new Intent(this, PrepareActivity.class);
         intent.putStringArrayListExtra(DATA, (ArrayList<String>) list);
         startActivity(intent);
         finish();
@@ -110,5 +112,11 @@ public class DownLoadResourceActivity extends AppCompatActivity implements DownL
             }
         });
         builder.show();
+    }
+
+    @Override
+    public void onCompletion(MediaPlayer mp) {
+        mVideoView.start();
+        mp.setLooping(true);
     }
 }

@@ -39,12 +39,15 @@ public class RecordUtils {
     private boolean mRecording;
     private boolean mHasVoice;
     private String mFilePath;
+    private long mLastTime;
 
     public static boolean isHasPermission(final Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.RECORD_AUDIO}, 1);
                 return false;
+            } else {
+                return true;
             }
         }
 
@@ -94,6 +97,7 @@ public class RecordUtils {
 
     public void initRecord(String filePath) {
         mHasVoice = false;
+
         mRecorder = new MediaRecorder();// new出MediaRecorder对象
         mRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
         // 设置MediaRecorder的音频源为麦克风
@@ -108,6 +112,7 @@ public class RecordUtils {
             mRecorder.prepare();// 准备录制
             mRecorder.start();// 开始录制
             mRecording = true;
+            mLastTime = System.currentTimeMillis();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -119,6 +124,7 @@ public class RecordUtils {
             mRecorder.stop();// 停止刻录
             mRecorder.release(); // 刻录完成一定要释放资源
             mRecording = false;
+            mLastTime = 0;
 
             if (!mHasVoice) {
                 //删除静音文件
@@ -131,9 +137,9 @@ public class RecordUtils {
     }
 
 
-    public void updateMicStatus() {
+    public boolean updateMicStatus() {
         if (!mRecording || mRecorder == null)
-            return;
+            return false;
 
 
         double ratio = (double) mRecorder.getMaxAmplitude() / 3;
@@ -141,9 +147,14 @@ public class RecordUtils {
         if (ratio > 1)
             db = 20 * Math.log10(ratio);
 
-        if (db > 60) {
+        if (db >= 50) {
             mHasVoice = true;
+            mLastTime = System.currentTimeMillis();
         }
+
         Log.e("gqiu", "当前分贝" + db);
+        return System.currentTimeMillis() - mLastTime > 1200;
     }
+
+
 }
