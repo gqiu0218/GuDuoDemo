@@ -59,16 +59,15 @@ public class ScreenFourTask implements Runnable {
             mListener.onBackState(true);
         }
 
-        if (progress == 18000) {
-            mProgressLayout.setVisibility(View.VISIBLE);
-            mRecordUtils.initRecord(FileUtils.getVoicePath(mContext, 4, 1));
-        }
-
         boolean interrupt = mRecordUtils.updateMicStatus();
         if (interrupt) {
             mRecordUtils.stopRecord();
         }
 
+        if (progress == 18000) {
+            mProgressLayout.setVisibility(View.VISIBLE);
+            mRecordUtils.initRecord(FileUtils.getVoicePath(mContext, 4, 1));
+        }
 
         if (progress == 56000) {
             mProgressLayout.setVisibility(View.GONE);
@@ -98,7 +97,7 @@ public class ScreenFourTask implements Runnable {
         if (!mStopProgress) {
             progress += 50;
 
-            if (progress >= 18000 && !interrupt) {
+            if (progress >= 18000) {
                 mCurrentProgress += 50;
             }
         }

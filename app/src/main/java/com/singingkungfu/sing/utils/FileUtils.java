@@ -14,6 +14,7 @@ import java.io.IOException;
 public class FileUtils {
     private static final String DOWNLOAD = "download";
     private static final String VOICE = "voice";
+    private static final String SCREEN_SHOT = "screenShot.jpg";
 
 
     private static String getRootFilePath(Context context) {
@@ -72,6 +73,11 @@ public class FileUtils {
         String filePath = rootPath + File.separator + "voice" + screen + "_" + index + ".amr";
         File file = new File(filePath);
         return file.exists();
+    }
+
+
+    public static String getScreenShotPath(Context context) {
+       return getRootFilePath(context) + File.separator + SCREEN_SHOT;
     }
 
 

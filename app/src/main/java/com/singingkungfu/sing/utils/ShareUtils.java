@@ -5,6 +5,7 @@ import android.content.Context;
 import com.singingkungfu.sing.R;
 import com.singingkungfu.sing.onekeyshare.OnekeyShare;
 
+import cn.sharesdk.tencent.qq.QQ;
 import cn.sharesdk.tencent.qzone.QZone;
 import cn.sharesdk.wechat.friends.Wechat;
 import cn.sharesdk.wechat.moments.WechatMoments;
@@ -19,12 +20,10 @@ public class ShareUtils {
         //关闭sso授权
         oks.disableSSOWhenAuthorize();
 
-// 分享时Notification的图标和文字  2.5.9以后的版本不调用此方法
-        //oks.setNotification(R.drawable.ic_launcher, getString(R.string.app_name));
         // title标题，印象笔记、邮箱、信息、微信、人人网和QQ空间使用
         oks.setTitle(title);
         // titleUrl是标题的网络链接，仅在人人网和QQ空间使用
-        if (platform.equals(QZone.NAME)){
+        if (platform.equals(QZone.NAME) || platform.equals(QQ.NAME)){
             oks.setTitleUrl(url);
         }
         oks.setUrl(url);

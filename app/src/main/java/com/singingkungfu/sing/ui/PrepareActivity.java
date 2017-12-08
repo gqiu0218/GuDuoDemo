@@ -111,7 +111,6 @@ public class PrepareActivity extends AppCompatActivity implements View.OnClickLi
     //检查耳机,录音权限
     private boolean check() {
         mConnectedHeadset = mAudioManager.isWiredHeadsetOn();
-        mConnectedHeadset = true;
         if (!mConnectedHeadset) {
             //不存在耳机
             AlertDialog.Builder builder = new AlertDialog.Builder(this);

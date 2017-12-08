@@ -26,7 +26,7 @@
 		AppSecret="e5a222bd4355b52bf5ef13a79db9eaf0"
 		UserName="gh_afb25ac019c9"
 		Path="pages/index/index.html?id=1"
-		BypassApproval="true"
+		BypassApproval="false"
 		Enable="true" />
 
 	<WechatMoments

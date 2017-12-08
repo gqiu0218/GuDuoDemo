@@ -30,6 +30,7 @@ import com.singingkungfu.sing.task.ScreenOneTask;
 import com.singingkungfu.sing.task.ScreenSixTask;
 import com.singingkungfu.sing.task.ScreenThreeTask;
 import com.singingkungfu.sing.task.ScreenTwoTask;
+import com.singingkungfu.sing.utils.ScreenShotUtils;
 import com.singingkungfu.sing.widget.CustomVideoView;
 
 import java.util.List;
@@ -86,8 +87,7 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
 
     private void initView() {
         mCaches = getIntent().getStringArrayListExtra(DownLoadResourceActivity.DATA);
-//        playStepOneView();
-        playStepSevenView();
+        playStepOneView();
     }
 
 
@@ -99,24 +99,24 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
     //防止锁屏或者切出的时候，音乐在播放
     @Override
     protected void onStop() {
-//        mVideoView.pause();
-//        switch (mIndex) {
-//            case 1:
-//                mScreenOneTask.isStop(true);
-//                break;
-//            case 2:
-//                mScreenTwoTask.isStop(true);
-//                break;
-//            case 3:
-//                mScreenThreeTask.isStop(true);
-//                break;
-//            case 4:
-//                mScreenFourTask.isStop(true);
-//                break;
-//            case 5:
-//                mScreenFiveTask.isStop(true);
-//                break;
-//        }
+        mVideoView.pause();
+        switch (mIndex) {
+            case 1:
+                mScreenOneTask.isStop(true);
+                break;
+            case 2:
+                mScreenTwoTask.isStop(true);
+                break;
+            case 3:
+                mScreenThreeTask.isStop(true);
+                break;
+            case 4:
+                mScreenFourTask.isStop(true);
+                break;
+            case 5:
+                mScreenFiveTask.isStop(true);
+                break;
+        }
         super.onStop();
     }
 
@@ -124,26 +124,26 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
     @Override
     protected void onResume() {
         super.onResume();
-//        if (mIndex != 7) {
-//            mVideoView.start();
-//        }
-//        switch (mIndex) {
-//            case 1:
-//                mScreenOneTask.isStop(false);
-//                break;
-//            case 2:
-//                mScreenTwoTask.isStop(false);
-//                break;
-//            case 3:
-//                mScreenThreeTask.isStop(false);
-//                break;
-//            case 4:
-//                mScreenFourTask.isStop(false);
-//                break;
-//            case 5:
-//                mScreenFiveTask.isStop(false);
-//                break;
-//        }
+        if (mIndex != 7) {
+            mVideoView.start();
+        }
+        switch (mIndex) {
+            case 1:
+                mScreenOneTask.isStop(false);
+                break;
+            case 2:
+                mScreenTwoTask.isStop(false);
+                break;
+            case 3:
+                mScreenThreeTask.isStop(false);
+                break;
+            case 4:
+                mScreenFourTask.isStop(false);
+                break;
+            case 5:
+                mScreenFiveTask.isStop(false);
+                break;
+        }
     }
 
 
@@ -204,7 +204,9 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
                 playStepTwoView();
                 break;
             case R.id.share_iv:         //分享
+                String path = ScreenShotUtils.getActivityShot(this);
                 ShareDialog dialog = new ShareDialog(this);
+                dialog.setPicPath(path);
                 dialog.show();
                 break;
             case R.id.finish_btn:      //完成测试

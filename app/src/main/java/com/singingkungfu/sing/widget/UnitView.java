@@ -9,6 +9,7 @@ import android.support.v4.content.ContextCompat;
 import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.view.View;
+import android.widget.TextView;
 
 import com.singingkungfu.sing.R;
 
@@ -74,36 +75,30 @@ public class UnitView extends View {
         int maxH = (int) (height * 0.35f);
         int cellW = width / TOTAL;
 
-        int index = 1;
-        while (index < TOTAL) {
+        int index = 0;
+        while (index <= TOTAL) {
             int startX = index * cellW;
-
-            switch (index) {
-                case 3:
-                case 8:
-                case 13:
-                case 18:
-                case 23:
-                case 28:
-                    mPaint.setStrokeWidth(mMaxSize);
-                    canvas.drawLine(startX, centerY - maxH / 2, startX, centerY + maxH / 2, mPaint);
-                    break;
-                case 5:
-                case 10:
-                case 15:
-                case 20:
-                case 25:
-                case 30:
-                case 35:
-                    String txt = index + "s";
-                    canvas.drawText(txt, startX, centerY + mTxtSize / 3, mUnitPaint);
-                default:
-                    mPaint.setStrokeWidth(mMinSize);
-                    canvas.drawLine(startX, centerY - minH / 2, startX, centerY + minH / 2, mPaint);
-                    break;
+            if (index == 0 || index == 10 || index == 19 || index == 29 || index == 38) {
+                String txt = index + "s";
+                if (index == 38) {
+                    startX -= getTextWidth();
+                }
+                canvas.drawText(txt, startX, centerY + mTxtSize / 3, mUnitPaint);
+            } else if (index % 3 == 0 && index > 0) {
+                mPaint.setStrokeWidth(mMaxSize);
+                canvas.drawLine(startX, centerY - maxH / 2, startX, centerY + maxH / 2, mPaint);
+            } else {
+                mPaint.setStrokeWidth(mMinSize);
+                canvas.drawLine(startX, centerY - minH / 2, startX, centerY + minH / 2, mPaint);
             }
             index++;
         }
     }
 
+
+    private int getTextWidth() {
+        TextPaint paint = new TextPaint();
+        paint.setTextSize(mTxtSize);
+        return (int) paint.measureText("38s");
+    }
 }

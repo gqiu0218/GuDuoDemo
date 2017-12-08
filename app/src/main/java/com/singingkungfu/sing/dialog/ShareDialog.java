@@ -1,6 +1,7 @@
 package com.singingkungfu.sing.dialog;
 
 import android.app.Activity;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.res.Resources;
 import android.support.design.widget.BottomSheetDialog;
@@ -10,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import com.singingkungfu.sing.R;
 import com.singingkungfu.sing.utils.ShareUtils;
@@ -35,6 +37,10 @@ public class ShareDialog implements View.OnClickListener {
         init(activity);
     }
 
+    public void setPicPath(String path) {
+        mPhotoUrl = path;
+    }
+
     public void setShareData(String title, String content, String photoUrl, String shareUrl) {
         mTitle = title;
         mContent = content;
@@ -55,6 +61,7 @@ public class ShareDialog implements View.OnClickListener {
         dialogView.findViewById(R.id.wechat_layout).setOnClickListener(this);
         dialogView.findViewById(R.id.qzone_layout).setOnClickListener(this);
         dialogView.findViewById(R.id.weibo_layout).setOnClickListener(this);
+        dialogView.findViewById(R.id.link_layout).setOnClickListener(this);
         dialogView.findViewById(R.id.cancel_tv).setOnClickListener(this);
         dialog.setContentView(dialogView);
 
@@ -104,7 +111,6 @@ public class ShareDialog implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         test();
-        boolean result = false;
         if (view.getId() == R.id.qq_layout) {
             //qq分享
             ShareUtils.toShare(mContext, QQ.NAME, mTitle, mShareUrl, mContent, mPhotoUrl);
@@ -120,14 +126,13 @@ public class ShareDialog implements View.OnClickListener {
         } else if (view.getId() == R.id.weibo_layout) {
             //微博分享
             ShareUtils.toShare(mContext, SinaWeibo.NAME, mTitle, mShareUrl, mContent, mPhotoUrl);
-        } else if (view.getId() == R.id.cancel_tv) {
-            //取消分享
-            dismiss();
+        } else if (view.getId() == R.id.link_layout) {
+            ClipboardManager cm = (ClipboardManager) mContext.getSystemService(Context.CLIPBOARD_SERVICE);
+            cm.setText(mContent);
+            Toast.makeText(mContext, "已复制", Toast.LENGTH_SHORT).show();
         }
 
-        if (result) {
-            dismiss();
-        }
+        dismiss();
     }
 
 
@@ -135,6 +140,5 @@ public class ShareDialog implements View.OnClickListener {
         mTitle = "[唱功]声音测试，了解你的声音特质！";
         mContent = "[唱功]声音测试，了解你的声音特质！邀你一起加入[唱功]!让声音成为你的武器！";
         mShareUrl = "http://www.baidu.com";
-        mPhotoUrl = "";
     }
 }

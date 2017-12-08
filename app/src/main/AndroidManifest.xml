@@ -25,14 +25,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <!-- 友盟 -->
-        <meta-data
-            android:name="UMENG_APPKEY"
-            android:value="59b24118f29d9801ff000c93" />
-        <meta-data
-            android:name="UMENG_CHANNEL"
-            android:value="guanfang" />
-
         <activity
             android:name=".ui.DownLoadResourceActivity"
             android:keepScreenOn="true"
