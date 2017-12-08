@@ -201,7 +201,8 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
                 onBack();
                 break;
             case R.id.reset_test_btn:   //重新测试
-                playStepTwoView();
+               setResult(RESULT_OK,getIntent());
+                finish();
                 break;
             case R.id.share_iv:         //分享
                 String path = ScreenShotUtils.getActivityShot(this);
@@ -273,6 +274,7 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
 
     //播放片段1
     private void playStepOneView() {
+        backIv.setVisibility(View.VISIBLE);
         mIndex = 1;
         setPlaySource(mCaches.get(1));
         mVideoView.start();
@@ -291,6 +293,7 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
 
     //播放片段2
     private void playStepTwoView() {
+        backIv.setVisibility(View.VISIBLE);
         mIndex = 2;
         setPlaySource(mCaches.get(2));
         mVideoView.start();
@@ -310,6 +313,7 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
 
     //播放片段3
     private void playStepThreeView() {
+        backIv.setVisibility(View.VISIBLE);
         mIndex = 3;
         setPlaySource(mCaches.get(3));
         mVideoView.start();
@@ -330,6 +334,7 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
 
     //播放片段4
     private void playStepFourView() {
+        backIv.setVisibility(View.VISIBLE);
         mIndex = 4;
         setPlaySource(mCaches.get(4));
         mVideoView.start();
@@ -350,6 +355,7 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
 
     //播放片段5
     private void playStepFiveView() {
+        backIv.setVisibility(View.VISIBLE);
         mIndex = 5;
         setPlaySource(mCaches.get(5));
         mVideoView.start();
@@ -391,6 +397,7 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
     //播放片段7
 
     private void playStepSevenView() {
+        mIndex = 7;
         removeCurrentStep();
         View itemView = LayoutInflater.from(this).inflate(R.layout.item_result, mControlView, false);
         mAvatarIv = (ImageView) itemView.findViewById(R.id.avatar_iv);

@@ -43,6 +43,7 @@ public class ScreenFourTask implements Runnable {
         mTestListener = testListener;
         mListener.onBackState(false);
 
+        FileUtils.deleteVoiceFile(context, 4, 1);
     }
 
     public void isStop(boolean stop) {
@@ -59,14 +60,35 @@ public class ScreenFourTask implements Runnable {
             mListener.onBackState(true);
         }
 
-        boolean interrupt = mRecordUtils.updateMicStatus();
-        if (interrupt) {
-            mRecordUtils.stopRecord();
+        boolean interrupt = false;
+        if (progress > 20000) {
+            interrupt = mRecordUtils.updateMicStatus();
+            if (interrupt) {
+                mRecordUtils.stopRecord();
+            }
+        }else{
+            mRecordUtils.updateMicStatus();
         }
 
         if (progress == 18000) {
             mProgressLayout.setVisibility(View.VISIBLE);
             mRecordUtils.initRecord(FileUtils.getVoicePath(mContext, 4, 1));
+        }
+
+
+        if (progress == 20000) {
+            mRecordUtils.stopRecord();
+            if (!FileUtils.isVoiceFileExist(mContext, 4, 1)) {
+                //说明前两秒没有任何声音,显示静音dialog
+                mTestListener.stopVideo();
+                if (mDialog == null || !mDialog.isShowing()) {
+                    mDialog = new CheckVoiceDialog(mContext, mTestListener);
+                    mDialog.show();
+                }
+            } else {
+                FileUtils.deleteVoiceFile(mContext, 4, 1);
+                mRecordUtils.initRecord(FileUtils.getVoicePath(mContext, 4, 1));
+            }
         }
 
         if (progress == 56000) {
@@ -81,13 +103,10 @@ public class ScreenFourTask implements Runnable {
                 mActionLayout.setVisibility(View.VISIBLE);
             } else {
                 //说明其中某段没有录制,弹窗显示
-                mTestListener.stopVideo();
-
                 if (mDialog == null || !mDialog.isShowing()) {
                     mDialog = new CheckVoiceDialog(mContext, mTestListener);
                     mDialog.show();
                 }
-
             }
         }
 

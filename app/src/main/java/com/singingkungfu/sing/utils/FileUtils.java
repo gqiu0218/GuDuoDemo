@@ -75,9 +75,18 @@ public class FileUtils {
         return file.exists();
     }
 
+    public static void deleteVoiceFile(Context context, int screen, int index) {
+        String rootPath = getVoicePath(context);
+        String filePath = rootPath + File.separator + "voice" + screen + "_" + index + ".amr";
+        File file = new File(filePath);
+        if (file.exists()) {
+            file.delete();
+        }
+    }
+
 
     public static String getScreenShotPath(Context context) {
-       return getRootFilePath(context) + File.separator + SCREEN_SHOT;
+        return getRootFilePath(context) + File.separator + SCREEN_SHOT;
     }
 
 

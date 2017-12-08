@@ -70,12 +70,22 @@ public class StartActivity extends AppCompatActivity implements View.OnClickList
     private void jump() {
         Intent intent = new Intent(this, MainActivity.class);
         intent.putStringArrayListExtra(DownLoadResourceActivity.DATA, (ArrayList<String>) mData);
-        startActivity(intent);
+        startActivityForResult(intent, 1);
     }
 
 
     @Override
     public void onCompletion(MediaPlayer mp) {
         jump();
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == RESULT_OK) {
+            finish();
+        }
     }
 }
