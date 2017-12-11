@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -13,6 +14,7 @@ import android.widget.RelativeLayout;
 import com.singingkungfu.sing.dialog.CheckVoiceDialog;
 import com.singingkungfu.sing.listener.AgainTestListener;
 import com.singingkungfu.sing.listener.BackListener;
+import com.singingkungfu.sing.listener.ScreenFourForwardListener;
 import com.singingkungfu.sing.utils.FileUtils;
 import com.singingkungfu.sing.utils.RecordUtils;
 
@@ -29,8 +31,11 @@ public class ScreenFourTask implements Runnable {
     private AgainTestListener mTestListener;
     private int mTotal;
     private CheckVoiceDialog mDialog;
+    private ScreenFourForwardListener forwardListener;
+    private int mForwardTime;
 
-    public ScreenFourTask(Context context, LinearLayout actionLayout, RelativeLayout progressLayout, View currentProgress, BackListener listener, AgainTestListener testListener, Handler handler) {
+
+    public ScreenFourTask(Context context, LinearLayout actionLayout, RelativeLayout progressLayout, View currentProgress, BackListener listener, AgainTestListener testListener, ScreenFourForwardListener listener3, Handler handler) {
         mContext = context;
         mActionLayout = actionLayout;
         mHandler = handler;
@@ -41,7 +46,9 @@ public class ScreenFourTask implements Runnable {
 
         mListener = listener;
         mTestListener = testListener;
+        forwardListener = listener3;
         mListener.onBackState(false);
+        mForwardTime = 0;
 
         FileUtils.deleteVoiceFile(context, 4, 1);
     }
@@ -54,8 +61,20 @@ public class ScreenFourTask implements Runnable {
         mStopProgress = stop;
     }
 
+    public void reset() {
+        progress = 0;
+        mCurrentProgress = 0;
+        mStopProgress = false;
+        mRecordUtils.stopRecord();
+        mForwardTime = 0;
+    }
+
     @Override
     public void run() {
+        if (progress == 0) {
+            mProgressLayout.setVisibility(View.GONE);
+        }
+
         if (progress == 16000) {
             mListener.onBackState(true);
         }
@@ -66,7 +85,7 @@ public class ScreenFourTask implements Runnable {
             if (interrupt) {
                 mRecordUtils.stopRecord();
             }
-        }else{
+        } else {
             mRecordUtils.updateMicStatus();
         }
 
@@ -100,7 +119,14 @@ public class ScreenFourTask implements Runnable {
         if (progress == 57000 || interrupt) {
             boolean ok = isCheckVoice();
             if (ok) {
-                mActionLayout.setVisibility(View.VISIBLE);
+                if (progress < 57000) {
+                    mForwardTime = progress;
+                    forwardListener.onScreenFourForward();
+                } else {
+                    mActionLayout.setVisibility(View.VISIBLE);
+                }
+
+
             } else {
                 //说明其中某段没有录制,弹窗显示
                 if (mDialog == null || !mDialog.isShowing()) {
@@ -110,13 +136,18 @@ public class ScreenFourTask implements Runnable {
             }
         }
 
+        Log.e("gqiu", "progress=" + progress);
+        if (mForwardTime != 0 && progress - mForwardTime == 1000) {
+            mActionLayout.setVisibility(View.VISIBLE);
+        }
+
         ViewGroup.LayoutParams params = mCurrentProgressLayout.getLayoutParams();
         params.width = (int) ((float) mCurrentProgress / 38000 * mTotal);
         mCurrentProgressLayout.setLayoutParams(params);
         if (!mStopProgress) {
             progress += 50;
 
-            if (progress >= 18000) {
+            if (progress >= 18000 && mForwardTime == 0) {
                 mCurrentProgress += 50;
             }
         }

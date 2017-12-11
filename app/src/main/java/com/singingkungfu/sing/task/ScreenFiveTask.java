@@ -41,6 +41,11 @@ public class ScreenFiveTask implements Runnable {
         mStopProgress = stop;
     }
 
+    public void reset() {
+        progress = 0;
+        mRecordUtils.stopRecord();
+    }
+
     @Override
     public void run() {
         if (progress == 27) {

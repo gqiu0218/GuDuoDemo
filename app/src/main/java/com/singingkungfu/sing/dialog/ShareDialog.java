@@ -14,6 +14,7 @@ import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.singingkungfu.sing.R;
+import com.singingkungfu.sing.utils.FileUtils;
 import com.singingkungfu.sing.utils.ShareUtils;
 
 import cn.sharesdk.sina.weibo.SinaWeibo;
@@ -35,11 +36,9 @@ public class ShareDialog implements View.OnClickListener {
     public ShareDialog(Activity activity) {
         mContext = activity;
         init(activity);
+        mPhotoUrl = FileUtils.getSharePic(activity);
     }
 
-    public void setPicPath(String path) {
-        mPhotoUrl = path;
-    }
 
     public void setShareData(String title, String content, String photoUrl, String shareUrl) {
         mTitle = title;

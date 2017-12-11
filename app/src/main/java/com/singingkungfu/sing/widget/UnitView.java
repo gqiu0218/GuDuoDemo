@@ -78,13 +78,7 @@ public class UnitView extends View {
         int index = 0;
         while (index <= TOTAL) {
             int startX = index * cellW;
-            if (index == 0 || index == 10 || index == 19 || index == 29 || index == 38) {
-                String txt = index + "s";
-                if (index == 38) {
-                    startX -= getTextWidth();
-                }
-                canvas.drawText(txt, startX, centerY + mTxtSize / 3, mUnitPaint);
-            } else if (index % 3 == 0 && index > 0) {
+            if (index % 3 == 0 && index > 0) {
                 mPaint.setStrokeWidth(mMaxSize);
                 canvas.drawLine(startX, centerY - maxH / 2, startX, centerY + maxH / 2, mPaint);
             } else {
@@ -93,6 +87,11 @@ public class UnitView extends View {
             }
             index++;
         }
+        canvas.drawText("0s", 0, centerY + mTxtSize / 3, mUnitPaint);
+        canvas.drawText("10s", width * 0.25f - getTextWidth() / 2, centerY + mTxtSize / 3, mUnitPaint);
+        canvas.drawText("19s", width * 0.5f - getTextWidth() / 2, centerY + mTxtSize / 3, mUnitPaint);
+        canvas.drawText("29s", width * 0.75f - getTextWidth() / 2, centerY + mTxtSize / 3, mUnitPaint);
+        canvas.drawText("38s", width - getTextWidth(), centerY + mTxtSize / 3, mUnitPaint);
     }
 
 

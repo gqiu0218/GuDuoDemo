@@ -24,18 +24,18 @@ import com.singingkungfu.sing.dialog.ShareDialog;
 import com.singingkungfu.sing.listener.AgainTestListener;
 import com.singingkungfu.sing.listener.AnalyzeVoiceListener;
 import com.singingkungfu.sing.listener.BackListener;
+import com.singingkungfu.sing.listener.ScreenFourForwardListener;
 import com.singingkungfu.sing.task.ScreenFiveTask;
 import com.singingkungfu.sing.task.ScreenFourTask;
 import com.singingkungfu.sing.task.ScreenOneTask;
 import com.singingkungfu.sing.task.ScreenSixTask;
 import com.singingkungfu.sing.task.ScreenThreeTask;
 import com.singingkungfu.sing.task.ScreenTwoTask;
-import com.singingkungfu.sing.utils.ScreenShotUtils;
 import com.singingkungfu.sing.widget.CustomVideoView;
 
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements CustomVideoView.OnCorveHideListener, MediaPlayer.OnCompletionListener, View.OnClickListener, AnalyzeVoiceListener, BackListener, AgainTestListener {
+public class MainActivity extends AppCompatActivity implements CustomVideoView.OnCorveHideListener, MediaPlayer.OnCompletionListener, View.OnClickListener, AnalyzeVoiceListener, BackListener, AgainTestListener, ScreenFourForwardListener {
     private CustomVideoView mVideoView;
     private RelativeLayout mControlView;
     private ImageView backIv;
@@ -201,13 +201,11 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
                 onBack();
                 break;
             case R.id.reset_test_btn:   //重新测试
-               setResult(RESULT_OK,getIntent());
+                setResult(RESULT_OK, getIntent());
                 finish();
                 break;
             case R.id.share_iv:         //分享
-                String path = ScreenShotUtils.getActivityShot(this);
                 ShareDialog dialog = new ShareDialog(this);
-                dialog.setPicPath(path);
                 dialog.show();
                 break;
             case R.id.finish_btn:      //完成测试
@@ -348,7 +346,7 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
             mScreenFourTask = null;
         }
 
-        mScreenFourTask = new ScreenFourTask(this, actionLayout, mProgressLayout, mCurrentProgressLayout, this, this, mHandler);
+        mScreenFourTask = new ScreenFourTask(this, actionLayout, mProgressLayout, mCurrentProgressLayout, this, this, this, mHandler);
         mHandler.post(mScreenFourTask);
         mVideoView.start();
     }
@@ -443,6 +441,7 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
         switch (mIndex) {
             case 1:
                 if (mResetScreen) {
+                    mScreenOneTask.reset();
                     mResetScreen = false;
                     mVideoView.seekTo(0);
                     mVideoView.start();
@@ -452,6 +451,7 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
                 break;
             case 2:
                 if (mResetScreen) {
+                    mScreenTwoTask.reset();
                     mResetScreen = false;
                     mVideoView.seekTo(0);
                     mVideoView.start();
@@ -461,6 +461,7 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
                 break;
             case 3:
                 if (mResetScreen) {
+                    mScreenThreeTask.reset();
                     mResetScreen = false;
                     mVideoView.seekTo(0);
                     mVideoView.start();
@@ -470,6 +471,7 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
                 break;
             case 4:
                 if (mResetScreen) {
+                    mScreenFourTask.reset();
                     mResetScreen = false;
                     mVideoView.seekTo(0);
                     mVideoView.start();
@@ -479,6 +481,7 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
                 break;
             case 5:
                 if (mResetScreen) {
+                    mScreenFiveTask.reset();
                     mResetScreen = false;
                     mVideoView.seekTo(0);
                     mVideoView.start();
@@ -526,5 +529,10 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
     @Override
     public void stopVideo() {
         mVideoView.pause();
+    }
+
+    @Override
+    public void onScreenFourForward() {
+        mVideoView.seekTo(58000);
     }
 }

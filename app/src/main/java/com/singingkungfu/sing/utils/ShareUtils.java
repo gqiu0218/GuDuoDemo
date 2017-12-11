@@ -1,6 +1,8 @@
 package com.singingkungfu.sing.utils;
 
+import android.content.ContentResolver;
 import android.content.Context;
+import android.content.res.Resources;
 
 import com.singingkungfu.sing.R;
 import com.singingkungfu.sing.onekeyshare.OnekeyShare;
@@ -23,7 +25,7 @@ public class ShareUtils {
         // title标题，印象笔记、邮箱、信息、微信、人人网和QQ空间使用
         oks.setTitle(title);
         // titleUrl是标题的网络链接，仅在人人网和QQ空间使用
-        if (platform.equals(QZone.NAME) || platform.equals(QQ.NAME)){
+        if (platform.equals(QZone.NAME) || platform.equals(QQ.NAME)) {
             oks.setTitleUrl(url);
         }
         oks.setUrl(url);
@@ -33,7 +35,7 @@ public class ShareUtils {
         oks.setImagePath(imagePath);//确保SDcard下面存在此张图片
 
         // url仅在微信（包括好友和朋友圈）中使用
-        if(platform.equals(Wechat.NAME)||platform.equals(WechatMoments.NAME)){
+        if (platform.equals(Wechat.NAME) || platform.equals(WechatMoments.NAME)) {
             oks.setUrl(url);
         }
         // site是分享此内容的网站名称，仅在QQ空间使用
@@ -41,5 +43,10 @@ public class ShareUtils {
         oks.setPlatform(platform);
         // 启动分享GUI
         oks.show(context);
+    }
+
+    private static String getShareIcon(Context context) {
+        Resources r = context.getResources();
+        return ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + r.getResourcePackageName(R.drawable.ic_share_pic) + "/" + r.getResourceTypeName(R.drawable.ic_share_pic) + "/" + r.getResourceEntryName(R.drawable.ic_share_pic);
     }
 }

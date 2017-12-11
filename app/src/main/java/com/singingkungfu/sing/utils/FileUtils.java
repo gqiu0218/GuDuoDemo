@@ -1,9 +1,14 @@
 package com.singingkungfu.sing.utils;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.text.TextUtils;
 
+import com.singingkungfu.sing.R;
+
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 /**
@@ -14,7 +19,7 @@ import java.io.IOException;
 public class FileUtils {
     private static final String DOWNLOAD = "download";
     private static final String VOICE = "voice";
-    private static final String SCREEN_SHOT = "screenShot.jpg";
+    private static final String SHARE_PIC = "sharePic.jpg";
 
 
     private static String getRootFilePath(Context context) {
@@ -85,11 +90,6 @@ public class FileUtils {
     }
 
 
-    public static String getScreenShotPath(Context context) {
-        return getRootFilePath(context) + File.separator + SCREEN_SHOT;
-    }
-
-
     public static String getFileName(String downloadUrl) {
         if (TextUtils.isEmpty(downloadUrl)) {
             return "";
@@ -98,6 +98,26 @@ public class FileUtils {
         int index = downloadUrl.lastIndexOf("/");
 
         return downloadUrl.substring(index + 1, downloadUrl.length());
+    }
+
+    public static String getSharePic(Context context) {
+        Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_share_pic);
+        String path = getRootFilePath(context) + File.separator + SHARE_PIC;
+        File file = new File(path);
+        if (file.exists()) {
+            file.delete();
+        }
+        try {
+            FileOutputStream out = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+            out.flush();
+            out.close();
+            return path;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return "";
     }
 }
 
