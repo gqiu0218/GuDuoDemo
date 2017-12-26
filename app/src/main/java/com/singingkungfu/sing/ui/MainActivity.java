@@ -393,7 +393,6 @@ public class MainActivity extends AppCompatActivity implements CustomVideoView.O
 
 
     //播放片段7
-
     private void playStepSevenView() {
         mIndex = 7;
         removeCurrentStep();
